@@ -1,0 +1,2524 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrganizeDay | Organize seu dia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4cc9f0;
+            --secondary: #3f37c9;
+            --success: #4ade80;
+            --danger: #f72585;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] {
+            --primary: #5a76ff;
+            --primary-light: #6ae1ff;
+            --secondary: #4f46e5;
+            --success: #65e891;
+            --danger: #ff3d96;
+            --warning: #ffb74d;
+            --dark: #e2e8f0;
+            --darker: #f1f5f9;
+            --light: #0f172a;
+            --gray: #64748b;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--darker);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #0c1a2d 0%, #111827 100%);
+            color: var(--darker);
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            background: white;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            padding: 4px;
+            margin-top: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 110px;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .header-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* Main container */
+        .container {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: fadeIn 0.4s ease;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .section {
+            background: #1e293b;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--darker);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        [data-theme="dark"] h2 {
+            color: var(--dark);
+        }
+
+        h2 i {
+            color: var(--primary);
+            background: #e0f2fe;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] h2 i {
+            background: rgba(67, 97, 238, 0.2);
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--darker);
+        }
+
+        [data-theme="dark"] label {
+            color: var(--dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8fafc;
+            color: var(--darker);
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            background: #0f172a;
+            border-color: #334155;
+            color: var(--dark);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            background: white;
+        }
+
+        [data-theme="dark"] input:focus,
+        [data-theme="dark"] select:focus,
+        [data-theme="dark"] textarea:focus {
+            background: #0f172a;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+        }
+
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        button.secondary {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: none;
+        }
+
+        [data-theme="dark"] button.secondary {
+            background: #1e293b;
+        }
+
+        button.danger {
+            background: var(--danger);
+            box-shadow: 0 4px 6px rgba(247, 37, 133, 0.2);
+        }
+
+        button.success {
+            background: var(--success);
+            box-shadow: 0 4px 6px rgba(74, 222, 128, 0.2);
+        }
+
+        /* Task styles */
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: var(--transition);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: white;
+        }
+
+        [data-theme="dark"] .task-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item:hover {
+            background: #f8fafc;
+        }
+
+        [data-theme="dark"] .task-item:hover {
+            background: #2d3748;
+        }
+
+        .task-check {
+            margin-right: 15px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .task-time {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .priority-low {
+            background: rgba(74, 222, 128, 0.1);
+            border-left: 4px solid var(--success);
+        }
+
+        .priority-medium {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--warning);
+        }
+
+        .priority-high {
+            background: rgba(247, 37, 133, 0.1);
+            border-left: 4px solid var(--danger);
+        }
+
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .priority-low .priority-badge {
+            background: rgba(74, 222, 128, 0.2);
+            color: var(--success);
+        }
+
+        .priority-medium .priority-badge {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .priority-high .priority-badge {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .completed {
+            opacity: 0.6;
+        }
+
+        /* Finance styles */
+        .finance-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            background: linear-gradient(to right, #f8fafc, #f1f5f9);
+            border-radius: 16px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] .summary-card {
+            background: linear-gradient(to right, #1e293b, #0f172a);
+            border-color: #334155;
+        }
+
+        .summary-title {
+            font-size: 0.95rem;
+            color: var(--gray);
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .finance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .finance-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--darker);
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        [data-theme="dark"] .finance-table th {
+            background: #0f172a;
+            color: var(--dark);
+            border-color: #334155;
+        }
+
+        .finance-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        [data-theme="dark"] .finance-table td {
+            border-color: #334155;
+        }
+
+        .finance-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Workout styles */
+        .muscle-groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .muscle-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        [data-theme="dark"] .muscle-card {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .muscle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .muscle-image {
+            height: 120px;
+            background: linear-gradient(to right, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .muscle-name {
+            padding: 15px 10px;
+            font-weight: 600;
+            background: #f8fafc;
+        }
+
+        [data-theme="dark"] .muscle-name {
+            background: #0f172a;
+        }
+
+        /* Timer styles */
+        .timer-container {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            color: var(--darker);
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            display: inline-block;
+            min-width: 250px;
+        }
+
+        [data-theme="dark"] .timer-display {
+            background: #0f172a;
+            color: var(--dark);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .timer-input {
+            max-width: 300px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .timer-input input {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Tips and empty states */
+        .tips-container {
+            margin-top: 1.5rem;
+        }
+
+        .tip-card {
+            background: #e8f4fc;
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1rem;
+        }
+
+        [data-theme="dark"] .tip-card {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .tip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        /* Diet section */
+        .diet-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 15px;
+        }
+
+        .diet-tab {
+            padding: 10px 20px;
+            border-radius: 50px;
+            background: #f1f5f9;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] .diet-tab {
+            background: #0f172a;
+        }
+
+        .diet-tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .meal-item {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+            border-left: 4px solid var(--primary);
+        }
+
+        [data-theme="dark"] .meal-item {
+            background: #1e293b;
+        }
+
+        .meal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .meal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .meal-time {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* Grocery list */
+        .grocery-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
+        }
+
+        [data-theme="dark"] .grocery-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .grocery-check {
+            margin-right: 15px;
+        }
+
+        .grocery-content {
+            flex: 1;
+        }
+
+        .grocery-title {
+            font-weight: 500;
+        }
+
+        .grocery-quantity {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .grocery-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .grocery-purchased {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        /* Footer */
+        footer {
+            background: white;
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.05);
+            border-top: 1px solid #e2e8f0;
+            transition: var(--transition);
+        }
+
+        [data-theme="dark"] footer {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: var(--success);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .modal-content {
+            background: #1e293b;
+        }
+
+        .modal.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--darker);
+        }
+
+        [data-theme="dark"] .modal-title {
+            color: var(--dark);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 2rem;
+            justify-content: flex-end;
+        }
+
+        /* Tutorial page */
+        .tutorial-step {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+        }
+
+        [data-theme="dark"] .tutorial-step {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .tutorial-step h3 {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tutorial-step i {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        /* Reports */
+        .chart-container {
+            height: 300px;
+            margin-bottom: 2rem;
+        }
+
+        /* Settings */
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        [data-theme="dark"] .settings-option {
+            border-color: #334155;
+        }
+
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .section {
+                padding: 1.3rem;
+            }
+            .timer-display {
+                font-size: 2.5rem;
+                min-width: 200px;
+            }
+            .finance-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+            .muscle-groups {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+            .tabs {
+                margin-top: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .finance-summary {
+                grid-template-columns: 1fr;
+            }
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .timer-controls button {
+                width: 100%;
+                max-width: 250px;
+            }
+            .modal-actions {
+                flex-direction: column;
+            }
+            .modal-actions button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cookie Consent Modal -->
+    <div class="modal" id="cookieModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Uso de Cookies</h3>
+            <p>O OrganizeDay usa cookies para salvar suas tarefas, finanças, treinos, dieta e lista de compras no seu dispositivo por até 12 meses. Nada sai do seu aparelho, garantindo total privacidade. Por favor, autorize os cookies para usar o app.</p>
+            <div class="modal-actions">
+                <button class="secondary" id="rejectCookies">Recusar</button>
+                <button id="acceptCookies">Autorizar Cookies</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Tasks Modal -->
+    <div class="modal" id="clearTasksModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Limpar Tarefas</h3>
+            <p>Você está prestes a excluir todas as tarefas. Esta ação não pode ser desfeita. Deseja continuar?</p>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelClearTasks">Cancelar</button>
+                <button class="danger" id="confirmClearTasks">Excluir Tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Finances Modal -->
+    <div class="modal" id="clearFinancesModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Limpar Finanças</h3>
+            <p>Você está prestes a excluir todas as finanças. Esta ação não pode ser desfeita. Deseja continuar?</p>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelClearFinances">Cancelar</button>
+                <button class="danger" id="confirmClearFinances">Excluir Tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clear Grocery Modal -->
+    <div class="modal" id="clearGroceryModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Limpar Lista de Compras</h3>
+            <p>Você está prestes a excluir todos os itens da lista de compras. Deseja continuar?</p>
+            <div class="modal-actions">
+                <button class="secondary" id="cancelClearGrocery">Cancelar</button>
+                <button class="danger" id="confirmClearGrocery">Excluir Tudo</button>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="logo">OrganizeDay</div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="tasks">
+                    <i class="fas fa-tasks"></i> Tarefas
+                </div>
+                <div class="tab" data-tab="finance">
+                    <i class="fas fa-money-bill-wave"></i> Finanças
+                </div>
+                <div class="tab" data-tab="workout">
+                    <i class="fas fa-dumbbell"></i> Treino
+                </div>
+                <div class="tab" data-tab="diet">
+                    <i class="fas fa-utensils"></i> Dieta
+                </div>
+                <div class="tab" data-tab="reports">
+                    <i class="fas fa-chart-bar"></i> Relatórios
+                </div>
+                <div class="tab" data-tab="settings">
+                    <i class="fas fa-cog"></i> Configurações
+                </div>
+            </div>
+            
+            <div class="header-actions">
+                <button class="header-btn" id="tutorialBtn">
+                    <i class="fas fa-question"></i>
+                </button>
+                <button class="header-btn" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Seção de Tarefas -->
+        <section id="tasks" class="section active">
+            <h2><i class="fas fa-list-check"></i> Tarefas do Dia</h2>
+            
+            <div class="card">
+                <div class="form-group">
+                    <label for="taskInput">Adicionar nova tarefa</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="taskInput" placeholder="O que precisa ser feito?">
+                        <button id="addTaskBtn"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+                
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div>
+                        <label for="taskPriority">Prioridade</label>
+                        <select id="taskPriority">
+                            <option value="low">Baixa</option>
+                            <option value="medium">Média</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="taskDate">Data</label>
+                        <input type="date" id="taskDate">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Minhas Tarefas</h3>
+                    <div>
+                        <button class="secondary" id="clearTasksBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                    </div>
+                </div>
+                
+                <div id="tasksList">
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Nenhuma tarefa adicionada</h3>
+                        <p>Comece adicionando suas tarefas diárias</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção de Finanças -->
+        <section id="finance" class="section">
+            <h2><i class="fas fa-chart-pie"></i> Gestão Financeira</h2>
+            
+            <div class="finance-summary">
+                <div class="summary-card">
+                    <div class="summary-title">Saldo Disponível</div>
+                    <div class="summary-value" id="balanceValue">R$ 0,00</div>
+                    <div class="summary-title">Atualizado hoje</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Receitas</div>
+                    <div class="summary-value positive" id="incomeValue">R$ 0,00</div>
+                    <div class="summary-title">Este mês</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Despesas</div>
+                    <div class="summary-value negative" id="expenseValue">R$ 0,00</div>
+                    <div class="summary-title">Este mês</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Economias</div>
+                    <div class="summary-value" id="savingsValue">0%</div>
+                    <div class="summary-title">Meta: 20%</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Adicionar Transação</h3>
+                <div class="form-group">
+                    <label for="transactionType">Tipo</label>
+                    <select id="transactionType">
+                        <option value="income">Receita</option>
+                        <option value="expense">Despesa</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionName">Descrição</label>
+                    <input type="text" id="transactionName" placeholder="Salário, Aluguel, Mercado...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionAmount">Valor (R$)</label>
+                    <input type="number" id="transactionAmount" placeholder="0,00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionCategory">Categoria</label>
+                    <select id="transactionCategory">
+                        <option value="salary">Salário</option>
+                        <option value="rent">Moradia</option>
+                        <option value="food">Alimentação</option>
+                        <option value="transport">Transporte</option>
+                        <option value="health">Saúde</option>
+                        <option value="leisure">Lazer</option>
+                        <option value="other">Outro</option>
+                    </select>
+                </div>
+                
+                <button id="addTransactionBtn"><i class="fas fa-plus"></i> Adicionar Transação</button>
+            </div>
+            
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3>Transações Recentes</h3>
+                    <div>
+                        <button class="secondary" id="clearFinancesBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                    </div>
+                </div>
+                
+                <div id="transactionsList">
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Nenhuma transação registrada</h3>
+                        <p>Adicione suas receitas e despesas para começar</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tips-container">
+                <h3><i class="fas fa-lightbulb"></i> Dicas Financeiras</h3>
+                <div class="tip-card">
+                    <div class="tip-title"><i class="fas fa-piggy-bank"></i> Economize 20% do seu salário</div>
+                    <div>Tente separar pelo menos 20% da sua renda para poupança ou investimentos antes de pagar outras contas.</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title"><i class="fas fa-chart-line"></i> Planejamento de gastos</div>
+                    <div>Crie categorias para seus gastos e estabeleça limites mensais para cada uma delas.</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção de Treino -->
+        <section id="workout" class="section">
+            <h2><i class="fas fa-running"></i> Treino e Musculação</h2>
+            
+            <div class="muscle-groups">
+                <div class="muscle-card" data-muscle="chest">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Peito</div>
+                </div>
+                <div class="muscle-card" data-muscle="back">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Costas</div>
+                </div>
+                <div class="muscle-card" data-muscle="legs">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Pernas</div>
+                </div>
+                <div class="muscle-card" data-muscle="shoulders">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Ombros</div>
+                </div>
+                <div class="muscle-card" data-muscle="biceps">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Bíceps</div>
+                </div>
+                <div class="muscle-card" data-muscle="triceps">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Tríceps</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Cronômetro de Treino</h3>
+                <div class="timer-container">
+                    <div class="timer-display" id="timerDisplay">00:00:00</div>
+                    <div class="timer-input">
+                        <input type="number" id="minutesInput" placeholder="Min" min="0" max="59" value="0">
+                        <input type="number" id="secondsInput" placeholder="Seg" min="0" max="59" value="0">
+                    </div>
+                    <div class="timer-controls">
+                        <button id="startTimerBtn"><i class="fas fa-play"></i> Iniciar</button>
+                        <button id="pauseTimerBtn"><i class="fas fa-pause"></i> Pausar</button>
+                        <button id="resetTimerBtn"><i class="fas fa-redo"></i> Reiniciar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção de Dieta e Compras -->
+        <section id="diet" class="section">
+            <h2><i class="fas fa-utensils"></i> Dieta e Lista de Compras</h2>
+            
+            <div class="diet-tabs">
+                <div class="diet-tab active" data-diet-tab="meals">Plano de Refeições</div>
+                <div class="diet-tab" data-diet-tab="grocery">Lista de Compras</div>
+            </div>
+            
+            <div id="mealsSection">
+                <div class="card">
+                    <h3>Adicionar Refeição</h3>
+                    <div class="form-group">
+                        <label for="mealName">Nome da Refeição</label>
+                        <input type="text" id="mealName" placeholder="Café da manhã, Almoço, Jantar...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mealTime">Horário</label>
+                        <input type="time" id="mealTime">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mealIngredients">Ingredientes</label>
+                        <textarea id="mealIngredients" placeholder="Liste os ingredientes necessários..." rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="mealCalories">Calorias (opcional)</label>
+                        <input type="number" id="mealCalories" placeholder="Calorias estimadas">
+                    </div>
+                    
+                    <button id="addMealBtn"><i class="fas fa-plus"></i> Adicionar Refeição</button>
+                </div>
+                
+                <div class="card">
+                    <h3>Minhas Refeições</h3>
+                    <div id="mealsList">
+                        <div class="empty-state">
+                            <i class="fas fa-utensils"></i>
+                            <h3>Nenhuma refeição planejada</h3>
+                            <p>Adicione suas refeições para começar</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="grocerySection" style="display: none;">
+                <div class="card">
+                    <h3>Adicionar Item à Lista de Compras</h3>
+                    <div class="form-group">
+                        <label for="groceryItem">Item</label>
+                        <input type="text" id="groceryItem" placeholder="O que você precisa comprar?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="groceryQuantity">Quantidade</label>
+                        <input type="text" id="groceryQuantity" placeholder="Ex: 1kg, 2 unidades...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="groceryCategory">Categoria (opcional)</label>
+                        <input type="text" id="groceryCategory" placeholder="Ex: Hortifruti, Mercearia...">
+                    </div>
+                    
+                    <button id="addGroceryBtn"><i class="fas fa-plus"></i> Adicionar Item</button>
+                </div>
+                
+                <div class="card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3>Lista de Compras</h3>
+                        <div>
+                            <button class="secondary" id="clearGroceryBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                        </div>
+                    </div>
+                    
+                    <div id="groceryList">
+                        <div class="empty-state">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Sua lista de compras está vazia</h3>
+                            <p>Adicione itens à sua lista de compras</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção de Relatórios -->
+        <section id="reports" class="section">
+            <h2><i class="fas fa-chart-bar"></i> Relatórios e Estatísticas</h2>
+            
+            <div class="card">
+                <h3>Desempenho de Tarefas</h3>
+                <div class="chart-container">
+                    <canvas id="tasksChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Gastos por Categoria</h3>
+                <div class="chart-container">
+                    <canvas id="expensesChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Exportar Dados</h3>
+                <p>Exporte todos os seus dados para backup ou análise externa.</p>
+                <button class="secondary" id="exportDataBtn"><i class="fas fa-download"></i> Exportar Dados</button>
+            </div>
+        </section>
+        
+        <!-- Seção de Configurações -->
+        <section id="settings" class="section">
+            <h2><i class="fas fa-cog"></i> Configurações</h2>
+            
+            <div class="card">
+                <div class="settings-option">
+                    <div>
+                        <h3>Modo Escuro</h3>
+                        <p>Ative o modo escuro para melhor experiência visual</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="settings-option">
+                    <div>
+                        <h3>Notificações</h3>
+                        <p>Receba lembretes para tarefas pendentes</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="notificationsToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                
+                <div class="settings-option">
+                    <div>
+                        <h3>Efeitos Sonoros</h3>
+                        <p>Ative sons ao completar tarefas</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="soundsToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Gerenciamento de Dados</h3>
+                <div class="settings-option">
+                    <div>
+                        <h3>Exportar Dados</h3>
+                        <p>Salve uma cópia de todos os seus dados</p>
+                    </div>
+                    <button class="secondary" id="exportAllDataBtn"><i class="fas fa-download"></i> Exportar</button>
+                </div>
+                
+                <div class="settings-option">
+                    <div>
+                        <h3>Importar Dados</h3>
+                        <p>Restaurar dados de um backup</p>
+                    </div>
+                    <button class="secondary" id="importDataBtn"><i class="fas fa-upload"></i> Importar</button>
+                </div>
+                
+                <div class="settings-option">
+                    <div>
+                        <h3>Limpar Todos os Dados</h3>
+                        <p>Excluir permanentemente todas as informações</p>
+                    </div>
+                    <button class="danger" id="resetAllDataBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Sobre o OrganizeDay</h3>
+                <p>Versão: 1.0.0</p>
+                <p>Desenvolvido para ajudar você a organizar seu dia com eficiência.</p>
+                <p>Todos os dados são armazenados localmente no seu dispositivo por até 12 meses.</p>
+            </div>
+        </section>
+        
+        <!-- Tutorial Section -->
+        <section id="tutorial" class="section">
+            <h2><i class="fas fa-book"></i> Como usar o OrganizeDay</h2>
+            
+            <div class="card">
+                <div class="tutorial-step">
+                    <h3><i class="fas fa-tasks"></i> Gerenciando Tarefas</h3>
+                    <p>1. Adicione novas tarefas com título, prioridade e data.</p>
+                    <p>2. Marque as tarefas como concluídas quando terminá-las.</p>
+                    <p>3. Use os filtros para ver tarefas pendentes, concluídas ou de hoje.</p>
+                    <p>4. Você pode editar ou excluir tarefas a qualquer momento.</p>
+                </div>
+                
+                <div class="tutorial-step">
+                    <h3><i class="fas fa-money-bill-wave"></i> Controlando Finanças</h3>
+                    <p>1. Registre suas receitas e despesas com categoria e valor.</p>
+                    <p>2. Acompanhe seu saldo e gastos por categoria no resumo.</p>
+                    <p>3. Utilize as dicas financeiras para melhorar seus hábitos.</p>
+                    <p>4. Exporte seus dados financeiros para análise.</p>
+                </div>
+                
+                <div class="tutorial-step">
+                    <h3><i class="fas fa-dumbbell"></i> Planejando Treinos</h3>
+                    <p>1. Selecione grupos musculares para planejar seus exercícios.</p>
+                    <p>2. Use o cronômetro para controlar o tempo de treino.</p>
+                    <p>3. Registre séries, repetições e pesos para acompanhar progresso.</p>
+                </div>
+                
+                <div class="tutorial-step">
+                    <h3><i class="fas fa-shopping-cart"></i> Dieta e Lista de Compras</h3>
+                    <p>1. Planeje suas refeições com horários e ingredientes.</p>
+                    <p>2. Adicione automaticamente ingredientes à lista de compras.</p>
+                    <p>3. Marque itens como comprados conforme você os adquire.</p>
+                    <p>4. Organize sua lista de compras por categorias.</p>
+                </div>
+                
+                <div class="tutorial-step">
+                    <h3><i class="fas fa-chart-bar"></i> Relatórios e Estatísticas</h3>
+                    <p>1. Visualize gráficos de desempenho de tarefas.</p>
+                    <p>2. Analise seus gastos por categoria.</p>
+                    <p>3. Exporte todos os seus dados para backup.</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button id="backToAppBtn"><i class="fas fa-arrow-left"></i> Voltar ao Aplicativo</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Operação realizada com sucesso!</span>
+    </div>
+
+    <footer>
+        <div>OrganizeDay © 2025 - Seus dados são armazenados localmente por até 12 meses - gahsouza.com.br</div>
+    </footer>
+
+    <script>
+        // Constants and configuration
+        const COOKIE_EXPIRATION = 365; // days
+        const DATA_KEYS = {
+            TASKS: 'organizeDay_tasks',
+            FINANCES: 'organizeDay_finances',
+            WORKOUTS: 'organizeDay_workouts',
+            DIET: 'organizeDay_diet',
+            GROCERY: 'organizeDay_grocery',
+            SETTINGS: 'organizeDay_settings',
+            COOKIE_CONSENT: 'organizeDay_cookieConsent',
+            TUTORIAL_VIEWED: 'organizeDay_tutorialViewed'
+        };
+        
+        // State management
+        let appState = {
+            tasks: [],
+            finances: [],
+            workouts: [],
+            diet: [],
+            grocery: [],
+            settings: {
+                darkMode: false,
+                notifications: true,
+                sounds: true
+            },
+            currentSection: 'tasks'
+        };
+        
+        // DOM Elements
+        const dom = {
+            // Sections
+            sections: document.querySelectorAll('.section'),
+            tabs: document.querySelectorAll('.tab'),
+            
+            // Task elements
+            taskInput: document.getElementById('taskInput'),
+            taskPriority: document.getElementById('taskPriority'),
+            taskDate: document.getElementById('taskDate'),
+            addTaskBtn: document.getElementById('addTaskBtn'),
+            tasksList: document.getElementById('tasksList'),
+            clearTasksBtn: document.getElementById('clearTasksBtn'),
+            
+            // Finance elements
+            transactionType: document.getElementById('transactionType'),
+            transactionName: document.getElementById('transactionName'),
+            transactionAmount: document.getElementById('transactionAmount'),
+            transactionCategory: document.getElementById('transactionCategory'),
+            addTransactionBtn: document.getElementById('addTransactionBtn'),
+            transactionsList: document.getElementById('transactionsList'),
+            balanceValue: document.getElementById('balanceValue'),
+            incomeValue: document.getElementById('incomeValue'),
+            expenseValue: document.getElementById('expenseValue'),
+            savingsValue: document.getElementById('savingsValue'),
+            clearFinancesBtn: document.getElementById('clearFinancesBtn'),
+            
+            // Workout elements
+            startTimerBtn: document.getElementById('startTimerBtn'),
+            pauseTimerBtn: document.getElementById('pauseTimerBtn'),
+            resetTimerBtn: document.getElementById('resetTimerBtn'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            minutesInput: document.getElementById('minutesInput'),
+            secondsInput: document.getElementById('secondsInput'),
+            
+            // Diet elements
+            dietTabs: document.querySelectorAll('.diet-tab'),
+            mealsSection: document.getElementById('mealsSection'),
+            grocerySection: document.getElementById('grocerySection'),
+            mealName: document.getElementById('mealName'),
+            mealTime: document.getElementById('mealTime'),
+            mealIngredients: document.getElementById('mealIngredients'),
+            mealCalories: document.getElementById('mealCalories'),
+            addMealBtn: document.getElementById('addMealBtn'),
+            mealsList: document.getElementById('mealsList'),
+            groceryItem: document.getElementById('groceryItem'),
+            groceryQuantity: document.getElementById('groceryQuantity'),
+            groceryCategory: document.getElementById('groceryCategory'),
+            addGroceryBtn: document.getElementById('addGroceryBtn'),
+            groceryList: document.getElementById('groceryList'),
+            clearGroceryBtn: document.getElementById('clearGroceryBtn'),
+            
+            // Reports elements
+            tasksChart: document.getElementById('tasksChart'),
+            expensesChart: document.getElementById('expensesChart'),
+            exportDataBtn: document.getElementById('exportDataBtn'),
+            
+            // Settings elements
+            darkModeToggle: document.getElementById('darkModeToggle'),
+            notificationsToggle: document.getElementById('notificationsToggle'),
+            soundsToggle: document.getElementById('soundsToggle'),
+            exportAllDataBtn: document.getElementById('exportAllDataBtn'),
+            importDataBtn: document.getElementById('importDataBtn'),
+            resetAllDataBtn: document.getElementById('resetAllDataBtn'),
+            
+            // Tutorial elements
+            tutorialBtn: document.getElementById('tutorialBtn'),
+            tutorialSection: document.getElementById('tutorial'),
+            backToAppBtn: document.getElementById('backToAppBtn'),
+            
+            // Theme toggle
+            themeToggle: document.getElementById('themeToggle'),
+            
+            // Notification
+            notification: document.getElementById('notification'),
+            notificationText: document.getElementById('notificationText'),
+            
+            // Modals
+            cookieModal: document.getElementById('cookieModal'),
+            acceptCookies: document.getElementById('acceptCookies'),
+            rejectCookies: document.getElementById('rejectCookies'),
+            clearTasksModal: document.getElementById('clearTasksModal'),
+            cancelClearTasks: document.getElementById('cancelClearTasks'),
+            confirmClearTasks: document.getElementById('confirmClearTasks'),
+            clearFinancesModal: document.getElementById('clearFinancesModal'),
+            cancelClearFinances: document.getElementById('cancelClearFinances'),
+            confirmClearFinances: document.getElementById('confirmClearFinances'),
+            clearGroceryModal: document.getElementById('clearGroceryModal'),
+            cancelClearGrocery: document.getElementById('cancelClearGrocery'),
+            confirmClearGrocery: document.getElementById('confirmClearGrocery')
+        };
+        
+        // Initialize the application
+        function initApp() {
+            // Check cookie consent
+            checkCookieConsent();
+            
+            // Load data from cookies
+            loadAppData();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Render initial data
+            renderTasks();
+            renderTransactions();
+            calculateFinances();
+            renderDiet();
+            renderGrocery();
+            
+            // Set up timer
+            updateTimerDisplay();
+            
+            // Set initial theme
+            updateTheme();
+            
+            // Show tutorial if not viewed
+            if (!appState.settings.tutorialViewed) {
+                showTutorial();
+            }
+        }
+        
+        // Cookie consent management
+        function checkCookieConsent() {
+            const consent = Cookies.get(DATA_KEYS.COOKIE_CONSENT);
+            if (consent === 'true') {
+                // Cookies accepted
+                return;
+            } else if (consent === 'false') {
+                // Cookies rejected
+                showNotification('Ative os cookies no seu navegador para salvar seus dados.');
+                return;
+            }
+            
+            // Show cookie consent modal
+            dom.cookieModal.classList.add('show');
+        }
+        
+        // Data management functions
+        function loadAppData() {
+            // Load settings
+            const savedSettings = Cookies.get(DATA_KEYS.SETTINGS);
+            if (savedSettings) {
+                appState.settings = JSON.parse(savedSettings);
+            }
+            
+            // Load tasks
+            const savedTasks = Cookies.get(DATA_KEYS.TASKS);
+            if (savedTasks) {
+                appState.tasks = JSON.parse(savedTasks);
+            }
+            
+            // Load finances
+            const savedFinances = Cookies.get(DATA_KEYS.FINANCES);
+            if (savedFinances) {
+                appState.finances = JSON.parse(savedFinances);
+            }
+            
+            // Load diet
+            const savedDiet = Cookies.get(DATA_KEYS.DIET);
+            if (savedDiet) {
+                appState.diet = JSON.parse(savedDiet);
+            }
+            
+            // Load grocery
+            const savedGrocery = Cookies.get(DATA_KEYS.GROCERY);
+            if (savedGrocery) {
+                appState.grocery = JSON.parse(savedGrocery);
+            }
+            
+            // Load tutorial viewed status
+            const tutorialViewed = Cookies.get(DATA_KEYS.TUTORIAL_VIEWED);
+            if (tutorialViewed) {
+                appState.settings.tutorialViewed = tutorialViewed === 'true';
+            }
+        }
+        
+        function saveAppData() {
+            // Save settings
+            Cookies.set(DATA_KEYS.SETTINGS, JSON.stringify(appState.settings), { expires: COOKIE_EXPIRATION });
+            
+            // Save tasks
+            Cookies.set(DATA_KEYS.TASKS, JSON.stringify(appState.tasks), { expires: COOKIE_EXPIRATION });
+            
+            // Save finances
+            Cookies.set(DATA_KEYS.FINANCES, JSON.stringify(appState.finances), { expires: COOKIE_EXPIRATION });
+            
+            // Save diet
+            Cookies.set(DATA_KEYS.DIET, JSON.stringify(appState.diet), { expires: COOKIE_EXPIRATION });
+            
+            // Save grocery
+            Cookies.set(DATA_KEYS.GROCERY, JSON.stringify(appState.grocery), { expires: COOKIE_EXPIRATION });
+            
+            // Save tutorial viewed status
+            Cookies.set(DATA_KEYS.TUTORIAL_VIEWED, appState.settings.tutorialViewed.toString(), { expires: COOKIE_EXPIRATION });
+        }
+        
+        // Task management functions
+        function addTask(text, priority = 'medium', date = null) {
+            if (!text.trim()) return;
+            
+            const now = new Date();
+            const taskDate = date || now.toISOString().split('T')[0];
+            
+            const newTask = {
+                id: Date.now(),
+                text: text,
+                priority: priority,
+                date: taskDate,
+                createdAt: now.toISOString(),
+                completed: false
+            };
+            
+            appState.tasks.unshift(newTask);
+            saveAppData();
+            renderTasks();
+            showNotification('Tarefa adicionada com sucesso!');
+        }
+        
+        function toggleTaskCompletion(id) {
+            const task = appState.tasks.find(t => t.id === id);
+            if (task) {
+                task.completed = !task.completed;
+                saveAppData();
+                renderTasks();
+                showNotification(task.completed ? 'Tarefa marcada como concluída!' : 'Tarefa marcada como pendente');
+            }
+        }
+        
+        function deleteTask(id) {
+            appState.tasks = appState.tasks.filter(t => t.id !== id);
+            saveAppData();
+            renderTasks();
+            showNotification('Tarefa removida com sucesso!');
+        }
+        
+        function clearAllTasks() {
+            appState.tasks = [];
+            saveAppData();
+            renderTasks();
+            showNotification('Todas as tarefas foram removidas!');
+        }
+        
+        function renderTasks() {
+            if (appState.tasks.length === 0) {
+                dom.tasksList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Nenhuma tarefa adicionada</h3>
+                        <p>Comece adicionando suas tarefas diárias</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group tasks by date
+            const tasksByDate = {};
+            appState.tasks.forEach(task => {
+                if (!tasksByDate[task.date]) {
+                    tasksByDate[task.date] = [];
+                }
+                tasksByDate[task.date].push(task);
+            });
+            
+            // Sort dates
+            const sortedDates = Object.keys(tasksByDate).sort((a, b) => new Date(a) - new Date(b));
+            
+            // Generate HTML
+            let html = '';
+            
+            sortedDates.forEach(date => {
+                const tasks = tasksByDate[date];
+                const dateObj = new Date(date);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                
+                let dateLabel;
+                if (dateObj.toDateString() === today.toDateString()) {
+                    dateLabel = '<strong>Hoje</strong>';
+                } else if (dateObj.toDateString() === new Date(today.getTime() + 86400000).toDateString()) {
+                    dateLabel = '<strong>Amanhã</strong>';
+                } else {
+                    dateLabel = dateObj.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+                    dateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
+                }
+                
+                html += `<div class="date-header">${dateLabel}</div>`;
+                
+                tasks.forEach(task => {
+                    const priorityClass = `priority-${task.priority}`;
+                    const completedClass = task.completed ? 'completed' : '';
+                    
+                    html += `
+                        <div class="task-item ${priorityClass} ${completedClass}" data-id="${task.id}">
+                            <div class="task-check">
+                                <input type="checkbox" id="task-${task.id}" ${task.completed ? 'checked' : ''}>
+                            </div>
+                            <div class="task-content">
+                                <div class="task-title">${task.text}</div>
+                                <div class="priority-badge">${getPriorityText(task.priority)}</div>
+                            </div>
+                            <div class="task-actions">
+                                <button class="danger small"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+            
+            dom.tasksList.innerHTML = html;
+            
+            // Add event listeners
+            appState.tasks.forEach(task => {
+                // Completion toggle
+                const checkbox = document.getElementById(`task-${task.id}`);
+                if (checkbox) {
+                    checkbox.addEventListener('change', () => toggleTaskCompletion(task.id));
+                }
+                
+                // Delete button
+                const deleteBtn = document.querySelector(`.task-item[data-id="${task.id}"] .danger`);
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => deleteTask(task.id));
+                }
+            });
+        }
+        
+        function getPriorityText(priority) {
+            switch (priority) {
+                case 'low': return 'Baixa Prioridade';
+                case 'medium': return 'Média Prioridade';
+                case 'high': return 'Alta Prioridade';
+                default: return 'Prioridade';
+            }
+        }
+        
+        // Finance management functions
+        function addTransaction(name, amount, type, category) {
+            if (!name.trim() || isNaN(amount) || amount <= 0) {
+                showNotification('Preencha todos os campos corretamente!');
+                return;
+            }
+            
+            const now = new Date();
+            
+            const newTransaction = {
+                id: Date.now(),
+                name: name,
+                amount: parseFloat(amount),
+                type: type,
+                category: category,
+                date: now.toISOString()
+            };
+            
+            appState.finances.unshift(newTransaction);
+            saveAppData();
+            renderTransactions();
+            calculateFinances();
+            showNotification('Transação adicionada com sucesso!');
+        }
+        
+        function deleteTransaction(id) {
+            appState.finances = appState.finances.filter(t => t.id !== id);
+            saveAppData();
+            renderTransactions();
+            calculateFinances();
+            showNotification('Transação removida com sucesso!');
+        }
+        
+        function clearAllFinances() {
+            appState.finances = [];
+            saveAppData();
+            renderTransactions();
+            calculateFinances();
+            showNotification('Todas as finanças foram removidas!');
+        }
+        
+        function calculateFinances() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+            
+            appState.finances.forEach(transaction => {
+                if (transaction.type === 'income') {
+                    totalIncome += transaction.amount;
+                } else {
+                    totalExpense += transaction.amount;
+                }
+            });
+            
+            const balance = totalIncome - totalExpense;
+            const savingsPercentage = totalIncome > 0 ? 
+                Math.round((balance / totalIncome) * 100) : 0;
+            
+            dom.balanceValue.textContent = `R$ ${balance.toFixed(2)}`;
+            dom.incomeValue.textContent = `R$ ${totalIncome.toFixed(2)}`;
+            dom.expenseValue.textContent = `R$ ${totalExpense.toFixed(2)}`;
+            dom.savingsValue.textContent = `${savingsPercentage}%`;
+            
+            // Set balance color
+            dom.balanceValue.className = 
+                balance >= 0 ? 'summary-value positive' : 'summary-value negative';
+        }
+        
+        function renderTransactions() {
+            if (appState.finances.length === 0) {
+                dom.transactionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Nenhuma transação registrada</h3>
+                        <p>Adicione suas receitas e despesas para começar</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = `
+                <table class="finance-table">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            appState.finances.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const formattedDate = date.toLocaleDateString('pt-BR');
+                
+                html += `
+                    <tr data-id="${transaction.id}">
+                        <td>${transaction.name}</td>
+                        <td>${getCategoryName(transaction.category)}</td>
+                        <td>${formattedDate}</td>
+                        <td class="${transaction.type === 'income' ? 'positive' : 'negative'}">
+                            ${transaction.type === 'income' ? '+' : '-'} R$ ${transaction.amount.toFixed(2)}
+                        </td>
+                        <td>
+                            <button class="danger small"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            html += `</tbody></table>`;
+            dom.transactionsList.innerHTML = html;
+            
+            // Add event listeners for delete buttons
+            appState.finances.forEach(transaction => {
+                const deleteBtn = document.querySelector(`tr[data-id="${transaction.id}"] .danger`);
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => deleteTransaction(transaction.id));
+                }
+            });
+        }
+        
+        function getCategoryName(category) {
+            const categories = {
+                'salary': 'Salário',
+                'rent': 'Moradia',
+                'food': 'Alimentação',
+                'transport': 'Transporte',
+                'health': 'Saúde',
+                'leisure': 'Lazer',
+                'other': 'Outro'
+            };
+            return categories[category] || category;
+        }
+        
+        // Diet management functions
+        function addMeal(name, time, ingredients, calories = null) {
+            if (!name.trim()) return;
+            
+            const newMeal = {
+                id: Date.now(),
+                name: name,
+                time: time,
+                ingredients: ingredients,
+                calories: calories ? parseInt(calories) : null,
+                createdAt: new Date().toISOString()
+            };
+            
+            appState.diet.unshift(newMeal);
+            saveAppData();
+            renderDiet();
+            showNotification('Refeição adicionada com sucesso!');
+            
+            // Suggest adding ingredients to grocery list
+            if (ingredients.trim()) {
+                const addToGrocery = confirm('Deseja adicionar os ingredientes à lista de compras?');
+                if (addToGrocery) {
+                    const ingredientList = ingredients.split('\n').filter(i => i.trim());
+                    ingredientList.forEach(ingredient => {
+                        addGroceryItem(ingredient, '', 'Ingredientes');
+                    });
+                    showNotification('Ingredientes adicionados à lista de compras!');
+                }
+            }
+        }
+        
+        function deleteMeal(id) {
+            appState.diet = appState.diet.filter(m => m.id !== id);
+            saveAppData();
+            renderDiet();
+            showNotification('Refeição removida com sucesso!');
+        }
+        
+        function renderDiet() {
+            if (appState.diet.length === 0) {
+                dom.mealsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-utensils"></i>
+                        <h3>Nenhuma refeição planejada</h3>
+                        <p>Adicione suas refeições para começar</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            appState.diet.forEach(meal => {
+                const time = meal.time ? `<div class="meal-time">${meal.time}</div>` : '';
+                const calories = meal.calories ? `<div><strong>Calorias:</strong> ${meal.calories}</div>` : '';
+                
+                html += `
+                    <div class="meal-item" data-id="${meal.id}">
+                        <div class="meal-header">
+                            <div class="meal-title">${meal.name}</div>
+                            ${time}
+                        </div>
+                        <div class="form-group">
+                            <label>Ingredientes:</label>
+                            <p>${meal.ingredients.replace(/\n/g, '<br>')}</p>
+                        </div>
+                        ${calories}
+                        <div class="meal-actions" style="margin-top: 15px;">
+                            <button class="danger small"><i class="fas fa-trash"></i> Remover</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            dom.mealsList.innerHTML = html;
+            
+            // Add event listeners for delete buttons
+            appState.diet.forEach(meal => {
+                const deleteBtn = document.querySelector(`.meal-item[data-id="${meal.id}"] .danger`);
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => deleteMeal(meal.id));
+                }
+            });
+        }
+        
+        // Grocery management functions
+        function addGroceryItem(name, quantity = '', category = '') {
+            if (!name.trim()) return;
+            
+            const newItem = {
+                id: Date.now(),
+                name: name,
+                quantity: quantity,
+                category: category,
+                purchased: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            appState.grocery.unshift(newItem);
+            saveAppData();
+            renderGrocery();
+            showNotification('Item adicionado à lista de compras!');
+        }
+        
+        function toggleGroceryItem(id) {
+            const item = appState.grocery.find(i => i.id === id);
+            if (item) {
+                item.purchased = !item.purchased;
+                saveAppData();
+                renderGrocery();
+                showNotification(item.purchased ? 'Item marcado como comprado!' : 'Item marcado como pendente');
+            }
+        }
+        
+        function deleteGroceryItem(id) {
+            appState.grocery = appState.grocery.filter(i => i.id !== id);
+            saveAppData();
+            renderGrocery();
+            showNotification('Item removido da lista de compras!');
+        }
+        
+        function clearAllGrocery() {
+            appState.grocery = [];
+            saveAppData();
+            renderGrocery();
+            showNotification('Lista de compras limpa com sucesso!');
+        }
+        
+        function renderGrocery() {
+            if (appState.grocery.length === 0) {
+                dom.groceryList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Sua lista de compras está vazia</h3>
+                        <p>Adicione itens à sua lista de compras</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group by category
+            const itemsByCategory = {};
+            appState.grocery.forEach(item => {
+                const category = item.category || 'Outros';
+                if (!itemsByCategory[category]) {
+                    itemsByCategory[category] = [];
+                }
+                itemsByCategory[category].push(item);
+            });
+            
+            let html = '';
+            
+            Object.keys(itemsByCategory).forEach(category => {
+                html += `<div class="category-header">${category}</div>`;
+                
+                itemsByCategory[category].forEach(item => {
+                    const purchasedClass = item.purchased ? 'grocery-purchased' : '';
+                    const quantity = item.quantity ? `<div class="grocery-quantity">${item.quantity}</div>` : '';
+                    
+                    html += `
+                        <div class="grocery-item ${purchasedClass}" data-id="${item.id}">
+                            <div class="grocery-check">
+                                <input type="checkbox" id="grocery-${item.id}" ${item.purchased ? 'checked' : ''}>
+                            </div>
+                            <div class="grocery-content">
+                                <div class="grocery-title">${item.name}</div>
+                                ${quantity}
+                            </div>
+                            <div class="grocery-actions">
+                                <button class="danger small"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+            
+            dom.groceryList.innerHTML = html;
+            
+            // Add event listeners
+            appState.grocery.forEach(item => {
+                // Purchase toggle
+                const checkbox = document.getElementById(`grocery-${item.id}`);
+                if (checkbox) {
+                    checkbox.addEventListener('change', () => toggleGroceryItem(item.id));
+                }
+                
+                // Delete button
+                const deleteBtn = document.querySelector(`.grocery-item[data-id="${item.id}"] .danger`);
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => deleteGroceryItem(item.id));
+                }
+            });
+        }
+        
+        // Timer functions
+        let timerInterval;
+        let timerSeconds = 0;
+        let isRunning = false;
+        
+        function startTimer() {
+            if (!isRunning) {
+                const minutes = parseInt(dom.minutesInput.value) || 0;
+                const seconds = parseInt(dom.secondsInput.value) || 0;
+                
+                timerSeconds = minutes * 60 + seconds;
+                
+                if (timerSeconds > 0) {
+                    isRunning = true;
+                    
+                    timerInterval = setInterval(() => {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                        
+                        if (timerSeconds <= 0) {
+                            clearInterval(timerInterval);
+                            isRunning = false;
+                            // Play sound
+                            if (appState.settings.sounds) {
+                                const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+                                audio.play();
+                            }
+                            showNotification('Tempo do cronômetro esgotado!');
+                        }
+                    }, 1000);
+                }
+            }
+        }
+        
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                showNotification('Cronômetro pausado');
+            }
+        }
+        
+        function resetTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timerSeconds = 0;
+            updateTimerDisplay();
+            dom.minutesInput.value = '';
+            dom.secondsInput.value = '';
+            showNotification('Cronômetro reiniciado');
+        }
+        
+        function updateTimerDisplay() {
+            const hours = Math.floor(timerSeconds / 3600);
+            const minutes = Math.floor((timerSeconds % 3600) / 60);
+            const seconds = timerSeconds % 60;
+            
+            dom.timerDisplay.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Theme management
+        function toggleTheme() {
+            appState.settings.darkMode = !appState.settings.darkMode;
+            saveAppData();
+            updateTheme();
+        }
+        
+        function updateTheme() {
+            if (appState.settings.darkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                dom.themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                dom.themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+        
+        // Tutorial management
+        function showTutorial() {
+            setActiveSection('tutorial');
+            appState.settings.tutorialViewed = true;
+            saveAppData();
+        }
+        
+        // Navigation functions
+        function setActiveSection(sectionId) {
+            // Hide all sections
+            dom.sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Deactivate all tabs
+            dom.tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Activate selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Activate corresponding tab
+            const tab = document.querySelector(`.tab[data-tab="${sectionId}"]`);
+            if (tab) {
+                tab.classList.add('active');
+            }
+            
+            appState.currentSection = sectionId;
+        }
+        
+        function setDietTab(activeTab) {
+            dom.dietTabs.forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.dietTab === activeTab);
+            });
+            
+            if (activeTab === 'meals') {
+                dom.mealsSection.style.display = 'block';
+                dom.grocerySection.style.display = 'none';
+            } else {
+                dom.mealsSection.style.display = 'none';
+                dom.grocerySection.style.display = 'block';
+            }
+        }
+        
+        // UI functions
+        function showNotification(message) {
+            dom.notificationText.textContent = message;
+            dom.notification.classList.add('show');
+            
+            setTimeout(() => {
+                dom.notification.classList.remove('show');
+            }, 3000);
+        }
+        
+        function showModal(modal) {
+            modal.classList.add('show');
+        }
+        
+        function hideModal(modal) {
+            modal.classList.remove('show');
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Navigation
+            dom.tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    setActiveSection(tab.dataset.tab);
+                });
+            });
+            
+            // Diet tabs
+            dom.dietTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    setDietTab(tab.dataset.dietTab);
+                });
+            });
+            
+            // Task management
+            dom.addTaskBtn.addEventListener('click', () => {
+                addTask(
+                    dom.taskInput.value, 
+                    dom.taskPriority.value, 
+                    dom.taskDate.value || null
+                );
+                dom.taskInput.value = '';
+                dom.taskDate.value = '';
+            });
+            
+            dom.clearTasksBtn.addEventListener('click', () => {
+                showModal(dom.clearTasksModal);
+            });
+            
+            // Finance management
+            dom.addTransactionBtn.addEventListener('click', () => {
+                addTransaction(
+                    dom.transactionName.value,
+                    dom.transactionAmount.value,
+                    dom.transactionType.value,
+                    dom.transactionCategory.value
+                );
+                dom.transactionName.value = '';
+                dom.transactionAmount.value = '';
+            });
+            
+            dom.clearFinancesBtn.addEventListener('click', () => {
+                showModal(dom.clearFinancesModal);
+            });
+            
+            // Timer
+            dom.startTimerBtn.addEventListener('click', startTimer);
+            dom.pauseTimerBtn.addEventListener('click', pauseTimer);
+            dom.resetTimerBtn.addEventListener('click', resetTimer);
+            
+            // Diet
+            dom.addMealBtn.addEventListener('click', () => {
+                addMeal(
+                    dom.mealName.value,
+                    dom.mealTime.value,
+                    dom.mealIngredients.value,
+                    dom.mealCalories.value
+                );
+                dom.mealName.value = '';
+                dom.mealTime.value = '';
+                dom.mealIngredients.value = '';
+                dom.mealCalories.value = '';
+            });
+            
+            // Grocery
+            dom.addGroceryBtn.addEventListener('click', () => {
+                addGroceryItem(
+                    dom.groceryItem.value,
+                    dom.groceryQuantity.value,
+                    dom.groceryCategory.value
+                );
+                dom.groceryItem.value = '';
+                dom.groceryQuantity.value = '';
+                dom.groceryCategory.value = '';
+            });
+            
+            dom.clearGroceryBtn.addEventListener('click', () => {
+                showModal(dom.clearGroceryModal);
+            });
+            
+            // Settings
+            dom.themeToggle.addEventListener('click', toggleTheme);
+            dom.darkModeToggle.addEventListener('change', toggleTheme);
+            
+            dom.exportAllDataBtn.addEventListener('click', exportAllData);
+            dom.resetAllDataBtn.addEventListener('click', resetAllData);
+            
+            // Tutorial
+            dom.tutorialBtn.addEventListener('click', showTutorial);
+            dom.backToAppBtn.addEventListener('click', () => {
+                setActiveSection(appState.currentSection);
+            });
+            
+            // Cookie consent
+            dom.acceptCookies.addEventListener('click', () => {
+                Cookies.set(DATA_KEYS.COOKIE_CONSENT, 'true', { expires: COOKIE_EXPIRATION });
+                hideModal(dom.cookieModal);
+                showNotification('Cookies autorizados. Seus dados serão salvos localmente.');
+            });
+            
+            dom.rejectCookies.addEventListener('click', () => {
+                Cookies.set(DATA_KEYS.COOKIE_CONSENT, 'false', { expires: COOKIE_EXPIRATION });
+                hideModal(dom.cookieModal);
+                showNotification('Cookies recusados. Ative os cookies para salvar seus dados.');
+            });
+            
+            // Clear modals
+            dom.cancelClearTasks.addEventListener('click', () => hideModal(dom.clearTasksModal));
+            dom.confirmClearTasks.addEventListener('click', () => {
+                clearAllTasks();
+                hideModal(dom.clearTasksModal);
+            });
+            
+            dom.cancelClearFinances.addEventListener('click', () => hideModal(dom.clearFinancesModal));
+            dom.confirmClearFinances.addEventListener('click', () => {
+                clearAllFinances();
+                hideModal(dom.clearFinancesModal);
+            });
+            
+            dom.cancelClearGrocery.addEventListener('click', () => hideModal(dom.clearGroceryModal));
+            dom.confirmClearGrocery.addEventListener('click', () => {
+                clearAllGrocery();
+                hideModal(dom.clearGroceryModal);
+            });
+        }
+        
+        // Data export/import
+        function exportAllData() {
+            const data = {
+                tasks: appState.tasks,
+                finances: appState.finances,
+                diet: appState.diet,
+                grocery: appState.grocery,
+                settings: appState.settings,
+                exportedAt: new Date().toISOString()
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = `organizeDay-export-${new Date().toISOString().split('T')[0]}.json`;
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            
+            showNotification('Dados exportados com sucesso!');
+        }
+        
+        function resetAllData() {
+            if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
+                appState.tasks = [];
+                appState.finances = [];
+                appState.diet = [];
+                appState.grocery = [];
+                appState.settings.darkMode = false;
+                
+                saveAppData();
+                
+                renderTasks();
+                renderTransactions();
+                calculateFinances();
+                renderDiet();
+                renderGrocery();
+                updateTheme();
+                
+                showNotification('Todos os dados foram resetados!');
+            }
+        }
+        
+        // Initialize the app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>

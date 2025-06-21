@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrganizeDay | Organize seu dia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📅</text></svg>">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4cc9f0;
+            --secondary: #3f37c9;
+            --success: #4ade80;
+            --danger: #f72585;
+            --warning: #f59e0b;
+            --dark: #1e293b;
+            --darker: #0f172a;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            color: var(--darker);
+            min-height: 100vh;
+            padding-bottom: 80px;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.2rem 1.5rem;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            background: white;
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50px;
+            padding: 4px;
+            margin-top: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 110px;
+            text-align: center;
+            padding: 10px 0;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            padding: 1.5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--darker);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 i {
+            color: var(--primary);
+            background: #e0f2fe;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--darker);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f8fafc;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            background: white;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+        }
+
+        button:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        button.secondary {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: none;
+        }
+
+        button.danger {
+            background: var(--danger);
+            box-shadow: 0 4px 6px rgba(247, 37, 133, 0.2);
+        }
+
+        button.success {
+            background: var(--success);
+            box-shadow: 0 4px 6px rgba(74, 222, 128, 0.2);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #f1f5f9;
+            transition: var(--transition);
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-item:hover {
+            background: #f8fafc;
+        }
+
+        .task-check {
+            margin-right: 15px;
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .task-time {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .finance-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-card {
+            background: linear-gradient(to right, #f8fafc, #f1f5f9);
+            border-radius: 16px;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .summary-title {
+            font-size: 0.95rem;
+            color: var(--gray);
+        }
+
+        .summary-value {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .finance-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .finance-table th {
+            text-align: left;
+            padding: 12px 15px;
+            background: #f1f5f9;
+            font-weight: 600;
+            color: var(--darker);
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .finance-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .finance-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .muscle-groups {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .muscle-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .muscle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .muscle-image {
+            height: 120px;
+            background: linear-gradient(to right, var(--primary-light), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        .muscle-name {
+            padding: 15px 10px;
+            font-weight: 600;
+            background: #f8fafc;
+        }
+
+        .timer-container {
+            text-align: center;
+            padding: 2rem 1rem;
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-weight: 800;
+            font-family: 'Courier New', monospace;
+            margin: 20px 0;
+            color: var(--darker);
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px;
+            display: inline-block;
+            min-width: 250px;
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .timer-input {
+            max-width: 300px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .timer-input input {
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .tips-container {
+            margin-top: 1.5rem;
+        }
+
+        .tip-card {
+            background: #e8f4fc;
+            border-left: 4px solid var(--primary);
+            padding: 1.2rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1rem;
+        }
+
+        .tip-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+
+        footer {
+            background: white;
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--gray);
+            font-size: 0.9rem;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.05);
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            color: var(--success);
+            padding: 15px 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(200%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            .section {
+                padding: 1.3rem;
+            }
+            .timer-display {
+                font-size: 2.5rem;
+                min-width: 200px;
+            }
+            .finance-summary {
+                grid-template-columns: 1fr 1fr;
+            }
+            .muscle-groups {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .finance-summary {
+                grid-template-columns: 1fr;
+            }
+            .timer-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            .timer-controls button {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar-day"></i>
+                </div>
+                <div class="logo">OrganizeDay</div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="tasks">
+                    <i class="fas fa-tasks"></i> Tarefas
+                </div>
+                <div class="tab" data-tab="finance">
+                    <i class="fas fa-money-bill-wave"></i> Finanças
+                </div>
+                <div class="tab" data-tab="workout">
+                    <i class="fas fa-dumbbell"></i> Treino
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Seção de Tarefas -->
+        <section id="tasks" class="section active">
+            <h2><i class="fas fa-list-check"></i> Tarefas do Dia</h2>
+            
+            <div class="card">
+                <div class="form-group">
+                    <label for="taskInput">Adicionar nova tarefa</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="taskInput" placeholder="O que precisa ser feito?">
+                        <button id="addTaskBtn"><i class="fas fa-plus"></i> Adicionar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Minhas Tarefas</h3>
+                <div id="tasksList">
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Nenhuma tarefa adicionada</h3>
+                        <p>Comece adicionando suas tarefas diárias</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção de Finanças -->
+        <section id="finance" class="section">
+            <h2><i class="fas fa-chart-pie"></i> Gestão Financeira</h2>
+            
+            <div class="finance-summary">
+                <div class="summary-card">
+                    <div class="summary-title">Saldo Disponível</div>
+                    <div class="summary-value" id="balanceValue">R$ 0,00</div>
+                    <div class="summary-title">Atualizado hoje</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Receitas</div>
+                    <div class="summary-value positive" id="incomeValue">R$ 0,00</div>
+                    <div class="summary-title">Este mês</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Despesas</div>
+                    <div class="summary-value negative" id="expenseValue">R$ 0,00</div>
+                    <div class="summary-title">Este mês</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Economias</div>
+                    <div class="summary-value" id="savingsValue">0%</div>
+                    <div class="summary-title">Meta: 20%</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Adicionar Transação</h3>
+                <div class="form-group">
+                    <label for="transactionType">Tipo</label>
+                    <select id="transactionType">
+                        <option value="income">Receita</option>
+                        <option value="expense">Despesa</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionName">Descrição</label>
+                    <input type="text" id="transactionName" placeholder="Salário, Aluguel, Mercado...">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionAmount">Valor (R$)</label>
+                    <input type="number" id="transactionAmount" placeholder="0,00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transactionCategory">Categoria</label>
+                    <select id="transactionCategory">
+                        <option value="salary">Salário</option>
+                        <option value="rent">Moradia</option>
+                        <option value="food">Alimentação</option>
+                        <option value="transport">Transporte</option>
+                        <option value="health">Saúde</option>
+                        <option value="leisure">Lazer</option>
+                        <option value="other">Outro</option>
+                    </select>
+                </div>
+                
+                <button id="addTransactionBtn"><i class="fas fa-plus"></i> Adicionar Transação</button>
+            </div>
+            
+            <div class="card">
+                <h3>Transações Recentes</h3>
+                <div id="transactionsList">
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Nenhuma transação registrada</h3>
+                        <p>Adicione suas receitas e despesas para começar</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tips-container">
+                <h3><i class="fas fa-lightbulb"></i> Dicas Financeiras</h3>
+                <div class="tip-card">
+                    <div class="tip-title"><i class="fas fa-piggy-bank"></i> Economize 20% do seu salário</div>
+                    <div>Tente separar pelo menos 20% da sua renda para poupança ou investimentos antes de pagar outras contas.</div>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-title"><i class="fas fa-chart-line"></i> Planejamento de gastos</div>
+                    <div>Crie categorias para seus gastos e estabeleça limites mensais para cada uma delas.</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Seção de Treino -->
+        <section id="workout" class="section">
+            <h2><i class="fas fa-running"></i> Treino e Musculação</h2>
+            
+            <div class="muscle-groups">
+                <div class="muscle-card" data-muscle="chest">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Peito</div>
+                </div>
+                <div class="muscle-card" data-muscle="back">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Costas</div>
+                </div>
+                <div class="muscle-card" data-muscle="legs">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Pernas</div>
+                </div>
+                <div class="muscle-card" data-muscle="shoulders">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Ombros</div>
+                </div>
+                <div class="muscle-card" data-muscle="biceps">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Bíceps</div>
+                </div>
+                <div class="muscle-card" data-muscle="triceps">
+                    <div class="muscle-image">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="muscle-name">Tríceps</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>Cronômetro de Treino</h3>
+                <div class="timer-container">
+                    <div class="timer-display" id="timerDisplay">00:00:00</div>
+                    <div class="timer-input">
+                        <input type="number" id="minutesInput" placeholder="Min" min="0" max="59" value="0">
+                        <input type="number" id="secondsInput" placeholder="Seg" min="0" max="59" value="0">
+                    </div>
+                    <div class="timer-controls">
+                        <button id="startTimerBtn"><i class="fas fa-play"></i> Iniciar</button>
+                        <button id="pauseTimerBtn"><i class="fas fa-pause"></i> Pausar</button>
+                        <button id="resetTimerBtn"><i class="fas fa-redo"></i> Reiniciar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Operação realizada com sucesso!</span>
+    </div>
+
+    <footer>
+        <div>OrganizeDay © 2025 - Seus dados são armazenados localmente por até 12 meses</div>
+    </footer>
+
+    <script>
+        // Controle de abas
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remover classe ativa de todas as abas
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                // Adicionar classe ativa na aba clicada
+                tab.classList.add('active');
+                
+                // Esconder todas as seções
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Mostrar seção correspondente
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Notificação
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Sistema de Tarefas
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            
+            if (tasks.length === 0) {
+                tasksList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3>Nenhuma tarefa adicionada</h3>
+                        <p>Comece adicionando suas tarefas diárias</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            tasksList.innerHTML = '';
+            
+            tasks.forEach((task, index) => {
+                const taskItem = document.createElement('div');
+                taskItem.className = 'task-item';
+                taskItem.innerHTML = `
+                    <div class="task-check">
+                        <input type="checkbox" id="task-${index}" ${task.completed ? 'checked' : ''}>
+                    </div>
+                    <div class="task-content">
+                        <div class="task-title">${task.text}</div>
+                        <div class="task-time">Adicionada em ${task.date} às ${task.time}</div>
+                    </div>
+                    <div class="task-actions">
+                        <button class="danger" data-index="${index}"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                
+                tasksList.appendChild(taskItem);
+                
+                // Evento de remoção
+                taskItem.querySelector('.danger').addEventListener('click', () => {
+                    tasks.splice(index, 1);
+                    saveTasks();
+                    renderTasks();
+                    showNotification('Tarefa removida com sucesso!');
+                });
+                
+                // Evento de conclusão
+                const checkbox = taskItem.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('change', () => {
+                    tasks[index].completed = checkbox.checked;
+                    saveTasks();
+                    showNotification(checkbox.checked ? 'Tarefa marcada como concluída!' : 'Tarefa marcada como pendente');
+                });
+            });
+        }
+
+        // Adicionar tarefa
+        document.getElementById('addTaskBtn').addEventListener('click', () => {
+            const taskInput = document.getElementById('taskInput');
+            const taskText = taskInput.value.trim();
+            
+            if (taskText) {
+                const now = new Date();
+                const date = now.toLocaleDateString();
+                const time = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                tasks.unshift({
+                    text: taskText,
+                    date: date,
+                    time: time,
+                    completed: false
+                });
+                
+                saveTasks();
+                renderTasks();
+                taskInput.value = '';
+                showNotification('Tarefa adicionada com sucesso!');
+            }
+        });
+
+        // Sistema Financeiro
+        function saveTransactions() {
+            localStorage.setItem('transactions', JSON.stringify(transactions));
+            calculateFinances();
+        }
+
+        function calculateFinances() {
+            let totalIncome = 0;
+            let totalExpense = 0;
+            
+            transactions.forEach(transaction => {
+                if (transaction.type === 'income') {
+                    totalIncome += parseFloat(transaction.amount);
+                } else {
+                    totalExpense += parseFloat(transaction.amount);
+                }
+            });
+            
+            const balance = totalIncome - totalExpense;
+            const savingsPercentage = totalIncome > 0 ? 
+                Math.round((balance / totalIncome) * 100) : 0;
+            
+            document.getElementById('balanceValue').textContent = `R$ ${balance.toFixed(2)}`;
+            document.getElementById('incomeValue').textContent = `R$ ${totalIncome.toFixed(2)}`;
+            document.getElementById('expenseValue').textContent = `R$ ${totalExpense.toFixed(2)}`;
+            document.getElementById('savingsValue').textContent = `${savingsPercentage}%`;
+            
+            // Cor do saldo
+            document.getElementById('balanceValue').className = 
+                balance >= 0 ? 'summary-value positive' : 'summary-value negative';
+        }
+
+        function renderTransactions() {
+            const transactionsList = document.getElementById('transactionsList');
+            
+            if (transactions.length === 0) {
+                transactionsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-receipt"></i>
+                        <h3>Nenhuma transação registrada</h3>
+                        <p>Adicione suas receitas e despesas para começar</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            transactionsList.innerHTML = `
+                <table class="finance-table">
+                    <thead>
+                        <tr>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Data</th>
+                            <th>Valor</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsTableBody"></tbody>
+                </table>
+            `;
+            
+            const tableBody = document.getElementById('transactionsTableBody');
+            
+            transactions.forEach((transaction, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${transaction.name}</td>
+                    <td>${getCategoryName(transaction.category)}</td>
+                    <td>${transaction.date}</td>
+                    <td class="${transaction.type === 'income' ? 'positive' : 'negative'}">
+                        ${transaction.type === 'income' ? '+' : '-'} R$ ${parseFloat(transaction.amount).toFixed(2)}
+                    </td>
+                    <td>
+                        <button class="danger small" data-index="${index}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tableBody.appendChild(row);
+                
+                // Evento de remoção
+                row.querySelector('button').addEventListener('click', () => {
+                    transactions.splice(index, 1);
+                    saveTransactions();
+                    renderTransactions();
+                    showNotification('Transação removida com sucesso!');
+                });
+            });
+        }
+
+        function getCategoryName(category) {
+            const categories = {
+                'salary': 'Salário',
+                'rent': 'Moradia',
+                'food': 'Alimentação',
+                'transport': 'Transporte',
+                'health': 'Saúde',
+                'leisure': 'Lazer',
+                'other': 'Outro'
+            };
+            return categories[category] || category;
+        }
+
+        // Adicionar transação
+        document.getElementById('addTransactionBtn').addEventListener('click', () => {
+            const name = document.getElementById('transactionName').value.trim();
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const type = document.getElementById('transactionType').value;
+            const category = document.getElementById('transactionCategory').value;
+            
+            if (!name || isNaN(amount) || amount <= 0) {
+                showNotification('Preencha todos os campos corretamente!');
+                return;
+            }
+            
+            const now = new Date();
+            const date = now.toLocaleDateString();
+            
+            transactions.unshift({
+                name: name,
+                amount: amount,
+                type: type,
+                category: category,
+                date: date
+            });
+            
+            saveTransactions();
+            renderTransactions();
+            
+            // Limpar formulário
+            document.getElementById('transactionName').value = '';
+            document.getElementById('transactionAmount').value = '';
+            
+            showNotification('Transação adicionada com sucesso!');
+        });
+
+        // Cronômetro
+        let timerInterval;
+        let timerSeconds = 0;
+        let isRunning = false;
+        
+        const timerDisplay = document.getElementById('timerDisplay');
+        
+        function updateTimerDisplay() {
+            const hours = Math.floor(timerSeconds / 3600);
+            const minutes = Math.floor((timerSeconds % 3600) / 60);
+            const seconds = timerSeconds % 60;
+            
+            timerDisplay.textContent = 
+                `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        document.getElementById('startTimerBtn').addEventListener('click', () => {
+            if (!isRunning) {
+                const minutes = parseInt(document.getElementById('minutesInput').value) || 0;
+                const seconds = parseInt(document.getElementById('secondsInput').value) || 0;
+                
+                timerSeconds = minutes * 60 + seconds;
+                
+                if (timerSeconds > 0) {
+                    isRunning = true;
+                    
+                    timerInterval = setInterval(() => {
+                        timerSeconds--;
+                        updateTimerDisplay();
+                        
+                        if (timerSeconds <= 0) {
+                            clearInterval(timerInterval);
+                            isRunning = false;
+                            // Tocar som de alerta
+                            const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV');
+                            audio.play();
+                            showNotification('Tempo do cronômetro esgotado!');
+                        }
+                    }, 1000);
+                }
+            }
+        });
+        
+        document.getElementById('pauseTimerBtn').addEventListener('click', () => {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                showNotification('Cronômetro pausado');
+            }
+        });
+        
+        document.getElementById('resetTimerBtn').addEventListener('click', () => {
+            clearInterval(timerInterval);
+            isRunning = false;
+            timerSeconds = 0;
+            updateTimerDisplay();
+            document.getElementById('minutesInput').value = '';
+            document.getElementById('secondsInput').value = '';
+            showNotification('Cronômetro reiniciado');
+        });
+
+        // Verificar se os dados precisam ser renovados
+        function checkDataRenewal() {
+            const savedData = localStorage.getItem('lastUpdate');
+            if (savedData) {
+                const lastUpdate = new Date(savedData);
+                const today = new Date();
+                const diffMonths = (today.getFullYear() - lastUpdate.getFullYear()) * 12 + 
+                                 (today.getMonth() - lastUpdate.getMonth());
+                
+                if (diffMonths >= 12) {
+                    if (confirm('Seus dados têm mais de 12 meses. Deseja renovar o armazenamento?')) {
+                        localStorage.setItem('lastUpdate', new Date().toISOString());
+                    }
+                }
+            } else {
+                localStorage.setItem('lastUpdate', new Date().toISOString());
+            }
+        }
+
+        // Inicializar a aplicação
+        window.addEventListener('load', () => {
+            // Verificar se já temos dados salvos
+            checkDataRenewal();
+            
+            // Renderizar dados
+            renderTasks();
+            renderTransactions();
+            calculateFinances();
+            updateTimerDisplay();
+            
+            // Mostrar aviso sobre cookies
+            if (!localStorage.getItem('cookieNoticeSeen')) {
+                setTimeout(() => {
+                    alert('Esta aplicação usa cookies para armazenar seus dados localmente. Os dados são mantidos por até 12 meses.');
+                    localStorage.setItem('cookieNoticeSeen', 'true');
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>
