@@ -1014,6 +1014,21 @@
         input:checked + .slider:before {
             transform: translateX(24px);
         }
+        
+        /* Novo estilo para o botão de visibilidade */
+        .visibility-toggle {
+            background: transparent;
+            border: none;
+            color: var(--darker);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-left: 10px;
+            transition: var(--transition);
+        }
+        
+        [data-theme="dark"] .visibility-toggle {
+            color: var(--dark);
+        }
 
         /* Responsive */
         @media (max-width: 768px) {
@@ -1213,7 +1228,12 @@
         
         <!-- Seção de Finanças -->
         <section id="finance" class="section">
-            <h2><i class="fas fa-chart-pie"></i> Gestão Financeira</h2>
+            <h2>
+                <i class="fas fa-chart-pie"></i> Gestão Financeira
+                <button id="toggleVisibility" class="visibility-toggle">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </h2>
             
             <div class="finance-summary">
                 <div class="summary-card">
@@ -1647,7 +1667,7 @@
                 </div>
                 
                 <div style="text-align: center; margin-top: 20px;">
-                    <button id="backToAppBtn" ><i class="fas fa-arrow-left"></i> Voltar ao Aplicativo</button>
+                    <button id="backToAppBtn"><i class="fas fa-arrow-left"></i> Voltar ao Aplicativo</button>
                 </div>
             </div>
         </section>
@@ -1673,7 +1693,8 @@
             GROCERY: 'organizeDay_grocery',
             SETTINGS: 'organizeDay_settings',
             COOKIE_CONSENT: 'organizeDay_cookieConsent',
-            TUTORIAL_VIEWED: 'organizeDay_tutorialViewed'
+            TUTORIAL_VIEWED: 'organizeDay_tutorialViewed',
+            SHOW_VALUES: 'organizeDay_showValues'
         };
         
         // State management
@@ -1693,7 +1714,8 @@
             settings: {
                 darkMode: false,
                 notifications: true,
-                sounds: true
+                sounds: true,
+                showValues: true
             },
             currentSection: 'tasks',
             currentMuscleGroup: null
@@ -1725,6 +1747,7 @@
             expenseValue: document.getElementById('expenseValue'),
             savingsValue: document.getElementById('savingsValue'),
             clearFinancesBtn: document.getElementById('clearFinancesBtn'),
+            toggleVisibility: document.getElementById('toggleVisibility'),
             
             // Workout elements
             startTimerBtn: document.getElementById('startTimerBtn'),
@@ -1823,10 +1846,16 @@
             // Set initial theme
             updateTheme();
             
+            // Update visibility icon
+            updateVisibilityIcon();
+            
             // Show tutorial if not viewed
             if (!appState.settings.tutorialViewed) {
                 showTutorial();
             }
+            
+            // Initialize charts
+            initCharts();
         }
         
         // Cookie consent management
@@ -1851,6 +1880,12 @@
             const savedSettings = Cookies.get(DATA_KEYS.SETTINGS);
             if (savedSettings) {
                 appState.settings = JSON.parse(savedSettings);
+            }
+            
+            // Load visibility preference
+            const savedShowValues = Cookies.get(DATA_KEYS.SHOW_VALUES);
+            if (savedShowValues !== undefined) {
+                appState.settings.showValues = savedShowValues === 'true';
             }
             
             // Load tasks
@@ -1893,6 +1928,9 @@
         function saveAppData() {
             // Save settings
             Cookies.set(DATA_KEYS.SETTINGS, JSON.stringify(appState.settings), { expires: COOKIE_EXPIRATION });
+            
+            // Save visibility preference
+            Cookies.set(DATA_KEYS.SHOW_VALUES, appState.settings.showValues.toString(), { expires: COOKIE_EXPIRATION });
             
             // Save tasks
             Cookies.set(DATA_KEYS.TASKS, JSON.stringify(appState.tasks), { expires: COOKIE_EXPIRATION });
@@ -2109,10 +2147,10 @@
             const savingsPercentage = totalIncome > 0 ? 
                 Math.round((balance / totalIncome) * 100) : 0;
             
-            dom.balanceValue.textContent = `R$ ${balance.toFixed(2)}`;
-            dom.incomeValue.textContent = `R$ ${totalIncome.toFixed(2)}`;
-            dom.expenseValue.textContent = `R$ ${totalExpense.toFixed(2)}`;
-            dom.savingsValue.textContent = `${savingsPercentage}%`;
+            dom.balanceValue.textContent = formatFinancialValue(balance);
+            dom.incomeValue.textContent = formatFinancialValue(totalIncome);
+            dom.expenseValue.textContent = formatFinancialValue(totalExpense);
+            dom.savingsValue.textContent = formatFinancialValue(savingsPercentage, false);
             
             // Set balance color
             dom.balanceValue.className = 
@@ -2140,6 +2178,9 @@
             appState.finances.forEach(transaction => {
                 const date = new Date(transaction.date);
                 const formattedDate = date.toLocaleDateString('pt-BR');
+                const displayAmount = appState.settings.showValues ? 
+                    `${transaction.type === 'income' ? '+' : '-'} R$ ${transaction.amount.toFixed(2)}` : 
+                    `${transaction.type === 'income' ? '+' : '-'} •••••`;
                 
                 html += `
                     <tr data-id="${transaction.id}">
@@ -2147,7 +2188,7 @@
                         <td>${getCategoryName(transaction.category)}</td>
                         <td>${formattedDate}</td>
                         <td class="${transaction.type === 'income' ? 'positive' : 'negative'}">
-                            ${transaction.type === 'income' ? '+' : '-'} R$ ${transaction.amount.toFixed(2)}
+                            ${displayAmount}
                         </td>
                         <td>
                             <button class="danger small"><i class="fas fa-trash"></i></button>
@@ -2165,6 +2206,28 @@
                     deleteBtn.addEventListener('click', () => deleteTransaction(transaction.id));
                 }
             });
+        }
+        
+        function formatFinancialValue(value, isCurrency = true) {
+            if (appState.settings.showValues) {
+                return isCurrency ? `R$ ${value.toFixed(2)}` : `${value}%`;
+            }
+            return isCurrency ? "R$ •••••" : "•••%";
+        }
+        
+        function toggleVisibility() {
+            appState.settings.showValues = !appState.settings.showValues;
+            saveAppData();
+            updateVisibilityIcon();
+            calculateFinances();
+            renderTransactions();
+            showNotification(appState.settings.showValues ? 
+                "Valores financeiros visíveis" : "Valores financeiros ocultos");
+        }
+        
+        function updateVisibilityIcon() {
+            const icon = dom.toggleVisibility.querySelector('i');
+            icon.className = appState.settings.showValues ? 'fas fa-eye' : 'fas fa-eye-slash';
         }
         
         function getCategoryName(category) {
@@ -2637,6 +2700,66 @@
             modal.classList.remove('show');
         }
         
+        // Initialize charts
+        function initCharts() {
+            // Tasks chart
+            const tasksCtx = dom.tasksChart.getContext('2d');
+            const tasksChart = new Chart(tasksCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+                    datasets: [{
+                        label: 'Tarefas Concluídas',
+                        data: [3, 5, 2, 6, 4, 1, 7],
+                        backgroundColor: 'rgba(74, 222, 128, 0.5)',
+                        borderColor: 'rgba(74, 222, 128, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Expenses chart
+            const expensesCtx = dom.expensesChart.getContext('2d');
+            const expensesChart = new Chart(expensesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Moradia', 'Alimentação', 'Transporte', 'Lazer', 'Outros'],
+                    datasets: [{
+                        label: 'Gastos por Categoria',
+                        data: [35, 25, 15, 15, 10],
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.5)',
+                            'rgba(74, 222, 128, 0.5)',
+                            'rgba(245, 158, 11, 0.5)',
+                            'rgba(247, 37, 133, 0.5)',
+                            'rgba(148, 163, 184, 0.5)'
+                        ],
+                        borderColor: [
+                            'rgba(67, 97, 238, 1)',
+                            'rgba(74, 222, 128, 1)',
+                            'rgba(245, 158, 11, 1)',
+                            'rgba(247, 37, 133, 1)',
+                            'rgba(148, 163, 184, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        
         // Setup event listeners
         function setupEventListeners() {
             // Navigation
@@ -2683,6 +2806,9 @@
             dom.clearFinancesBtn.addEventListener('click', () => {
                 showModal(dom.clearFinancesModal);
             });
+            
+            // Toggle visibility
+            dom.toggleVisibility.addEventListener('click', toggleVisibility);
             
             // Timer
             dom.startTimerBtn.addEventListener('click', startTimer);
@@ -2748,7 +2874,7 @@
             // Tutorial
             dom.tutorialBtn.addEventListener('click', showTutorial);
             dom.backToAppBtn.addEventListener('click', () => {
-                setActiveSection(appState.currentSection);
+                setActiveSection('tasks');
             });
             
             // Cookie consent
