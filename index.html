@@ -2645,7 +2645,7 @@
         }
         
         // Navigation functions
-        function setActiveSection(sectionId) {
+       function setActiveSection(sectionId) {
             // Hide all sections
             dom.sections.forEach(section => {
                 section.classList.remove('active');
@@ -2666,8 +2666,13 @@
             }
             
             appState.currentSection = sectionId;
+            
+            // Atualizar gráficos quando acessar a seção de relatórios
+            if (sectionId === 'reports') {
+                renderExpensesChart();
+            }
         }
-        
+ 
         function setDietTab(activeTab) {
             dom.dietTabs.forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.dietTab === activeTab);
@@ -2701,10 +2706,11 @@
         }
         
         // Initialize charts
+         // Initialize charts
         function initCharts() {
-            // Tasks chart
+            // Tasks chart (mantido estático para exemplo)
             const tasksCtx = dom.tasksChart.getContext('2d');
-            const tasksChart = new Chart(tasksCtx, {
+            new Chart(tasksCtx, {
                 type: 'bar',
                 data: {
                     labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
@@ -2726,40 +2732,79 @@
                     }
                 }
             });
-            
-            // Expenses chart
+        }
+
+        // Função para obter dados reais de despesas para o gráfico
+        function getExpenseDataForChart() {
+            const expensesByCategory = {};
+
+            // Filtrar apenas despesas e agrupar por categoria
+            appState.finances.forEach(transaction => {
+                if (transaction.type === 'expense') {
+                    if (!expensesByCategory[transaction.category]) {
+                        expensesByCategory[transaction.category] = 0;
+                    }
+                    expensesByCategory[transaction.category] += transaction.amount;
+                }
+            });
+
+            // Converter para arrays de labels e dados
+            const labels = Object.keys(expensesByCategory).map(cat => getCategoryName(cat));
+            const data = Object.values(expensesByCategory);
+
+            return { labels, data };
+        }
+
+        // Função para renderizar o gráfico de despesas com dados reais
+        function renderExpensesChart() {
             const expensesCtx = dom.expensesChart.getContext('2d');
-            const expensesChart = new Chart(expensesCtx, {
+            
+            // Destruir gráfico anterior se existir
+            if (window.expensesChartInstance) {
+                window.expensesChartInstance.destroy();
+            }
+
+            const expensesData = getExpenseDataForChart();
+
+            window.expensesChartInstance = new Chart(expensesCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Moradia', 'Alimentação', 'Transporte', 'Lazer', 'Outros'],
+                    labels: expensesData.labels,
                     datasets: [{
                         label: 'Gastos por Categoria',
-                        data: [35, 25, 15, 15, 10],
+                        data: expensesData.data,
                         backgroundColor: [
                             'rgba(67, 97, 238, 0.5)',
                             'rgba(74, 222, 128, 0.5)',
                             'rgba(245, 158, 11, 0.5)',
                             'rgba(247, 37, 133, 0.5)',
-                            'rgba(148, 163, 184, 0.5)'
+                            'rgba(148, 163, 184, 0.5)',
+                            'rgba(100, 200, 150, 0.5)',
+                            'rgba(200, 150, 200, 0.5)'
                         ],
                         borderColor: [
                             'rgba(67, 97, 238, 1)',
                             'rgba(74, 222, 128, 1)',
                             'rgba(245, 158, 11, 1)',
                             'rgba(247, 37, 133, 1)',
-                            'rgba(148, 163, 184, 1)'
+                            'rgba(148, 163, 184, 1)',
+                            'rgba(100, 200, 150, 1)',
+                            'rgba(200, 150, 200, 1)'
                         ],
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right'
+                        }
+                    }
                 }
             });
         }
-        
         // Setup event listeners
         function setupEventListeners() {
             // Navigation
