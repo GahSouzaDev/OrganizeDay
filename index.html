@@ -65,14 +65,11 @@
         header {
             background: linear-gradient(to right, var(--primary), var(--secondary));
             color: white;
-            padding: 1.2rem 1.5rem;
+            padding: 1rem 1rem 0.8rem;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .header-content {
@@ -82,74 +79,89 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .logo-container {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
+            font-size: 1.5rem;
+            font-weight: 700;
             letter-spacing: -0.5px;
         }
 
         .logo-icon {
             background: white;
             color: var(--primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
+        }
+
+        .tabs-container {
+            width: 100%;
+            overflow-x: auto;
+            padding-bottom: 5px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.3) transparent;
         }
 
         .tabs {
             display: flex;
             background: rgba(255, 255, 255, 0.15);
             border-radius: 50px;
-            padding: 4px;
-            margin-top: 20px;
-            overflow-x: auto;
-            scrollbar-width: none;
+            padding: 3px;
+            min-width: max-content;
         }
 
         .tabs::-webkit-scrollbar {
-            display: none;
+            height: 4px;
+        }
+
+        .tabs::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
         }
 
         .tab {
             flex: 1;
-            min-width: 110px;
+            min-width: 90px;
             text-align: center;
-            padding: 10px 0;
+            padding: 8px 5px;
             border-radius: 50px;
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
+            font-size: 0.85rem;
         }
 
         .tab.active {
             background: white;
             color: var(--primary);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
 
         .header-actions {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
+            margin-bottom: 10px;
         }
 
         .header-btn {
             background: rgba(255, 255, 255, 0.2);
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -158,7 +170,7 @@
             transition: var(--transition);
             border: none;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
         }
 
         .header-btn:hover {
@@ -168,17 +180,17 @@
 
         /* Main container */
         .container {
-            padding: 1.5rem;
+            padding: 1rem;
             max-width: 1200px;
             margin: 0 auto;
         }
 
         .section {
             background: white;
-            border-radius: 20px;
+            border-radius: 18px;
             box-shadow: var(--card-shadow);
-            padding: 1.8rem;
-            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
             display: none;
             animation: fadeIn 0.4s ease;
             transition: var(--transition);
@@ -198,12 +210,12 @@
         }
 
         h2 {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
             color: var(--darker);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         [data-theme="dark"] h2 {
@@ -213,13 +225,14 @@
         h2 i {
             color: var(--primary);
             background: #e0f2fe;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: var(--transition);
+            font-size: 1rem;
         }
 
         [data-theme="dark"] h2 i {
@@ -229,9 +242,9 @@
         .card {
             background: white;
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 1.2rem;
             box-shadow: var(--card-shadow);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             border: 1px solid #e2e8f0;
             transition: var(--transition);
         }
@@ -242,14 +255,15 @@
         }
 
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
             font-weight: 500;
             color: var(--darker);
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] label {
@@ -258,10 +272,10 @@
 
         input, select, textarea {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            font-size: 1rem;
+            border-radius: 10px;
+            font-size: 0.95rem;
             transition: var(--transition);
             background: #f8fafc;
             color: var(--darker);
@@ -292,15 +306,15 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 1rem;
+            font-size: 0.95rem;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
         }
 
@@ -315,6 +329,7 @@
             color: var(--primary);
             border: 1px solid var(--primary);
             box-shadow: none;
+            padding: 8px 12px;
         }
 
         [data-theme="dark"] button.secondary {
@@ -331,15 +346,20 @@
             box-shadow: 0 4px 6px rgba(74, 222, 128, 0.2);
         }
 
+        button.small {
+            padding: 6px 10px;
+            font-size: 0.85rem;
+        }
+
         /* Task styles */
         .task-item {
             display: flex;
             align-items: center;
-            padding: 15px;
+            padding: 12px;
             border-bottom: 1px solid #f1f5f9;
             transition: var(--transition);
-            border-radius: 12px;
-            margin-bottom: 8px;
+            border-radius: 10px;
+            margin-bottom: 6px;
             background: white;
         }
 
@@ -361,7 +381,7 @@
         }
 
         .task-check {
-            margin-right: 15px;
+            margin-right: 12px;
         }
 
         .task-content {
@@ -371,16 +391,17 @@
         .task-title {
             font-weight: 500;
             margin-bottom: 4px;
+            font-size: 0.95rem;
         }
 
         .task-time {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--gray);
         }
 
         .task-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .priority-low {
@@ -399,12 +420,12 @@
         }
 
         .priority-badge {
-            padding: 4px 8px;
+            padding: 3px 8px;
             border-radius: 50px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             display: inline-block;
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .priority-low .priority-badge {
@@ -429,15 +450,15 @@
         /* Finance styles */
         .finance-summary {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 1.2rem;
         }
 
         .summary-card {
             background: linear-gradient(to right, #f8fafc, #f1f5f9);
-            border-radius: 16px;
-            padding: 1.2rem;
+            border-radius: 14px;
+            padding: 1rem;
             text-align: center;
             border: 1px solid #e2e8f0;
             transition: var(--transition);
@@ -449,14 +470,14 @@
         }
 
         .summary-title {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             color: var(--gray);
         }
 
         .summary-value {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 800;
-            margin: 10px 0;
+            margin: 8px 0;
             font-family: 'Courier New', monospace;
         }
 
@@ -468,19 +489,26 @@
             color: var(--danger);
         }
 
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            margin-top: 1rem;
+        }
+
         .finance-table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1rem;
+            min-width: 600px;
         }
 
         .finance-table th {
             text-align: left;
-            padding: 12px 15px;
+            padding: 10px 12px;
             background: #f1f5f9;
             font-weight: 600;
             color: var(--darker);
             border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85rem;
         }
 
         [data-theme="dark"] .finance-table th {
@@ -490,8 +518,9 @@
         }
 
         .finance-table td {
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 1px solid #e2e8f0;
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] .finance-table td {
@@ -505,13 +534,13 @@
         /* Workout styles */
         .muscle-groups {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
         }
 
         .muscle-card {
             background: white;
-            border-radius: 16px;
+            border-radius: 14px;
             overflow: hidden;
             box-shadow: var(--card-shadow);
             transition: var(--transition);
@@ -526,47 +555,96 @@
         }
 
         .muscle-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
         }
 
         .muscle-image {
-            height: 120px;
+            height: 100px;
             background: linear-gradient(to right, var(--primary-light), var(--primary));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 2.5rem;
             color: white;
         }
 
         .muscle-name {
-            padding: 15px 10px;
+            padding: 12px 8px;
             font-weight: 600;
             background: #f8fafc;
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] .muscle-name {
             background: #0f172a;
         }
 
+        /* Exercises section */
+        .exercise-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            gap: 10px;
+        }
+
+        [data-theme="dark"] .exercise-item {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .exercise-check {
+            min-width: 22px;
+        }
+
+        .exercise-content {
+            flex: 1;
+        }
+
+        .exercise-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .exercise-details {
+            font-size: 0.85rem;
+            color: var(--gray);
+            display: flex;
+            gap: 8px;
+        }
+
+        .exercise-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .exercise-completed {
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+
         /* Timer styles */
         .timer-container {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
         }
 
         .timer-display {
-            font-size: 3.5rem;
+            font-size: 2.8rem;
             font-weight: 800;
             font-family: 'Courier New', monospace;
-            margin: 20px 0;
+            margin: 15px 0;
             color: var(--darker);
             background: #f8fafc;
-            border-radius: 12px;
-            padding: 15px;
+            border-radius: 10px;
+            padding: 12px;
             display: inline-block;
-            min-width: 250px;
+            min-width: 220px;
         }
 
         [data-theme="dark"] .timer-display {
@@ -577,17 +655,17 @@
         .timer-controls {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 12px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
 
         .timer-input {
-            max-width: 300px;
+            max-width: 280px;
             margin: 0 auto;
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .timer-input input {
@@ -597,15 +675,16 @@
 
         /* Tips and empty states */
         .tips-container {
-            margin-top: 1.5rem;
+            margin-top: 1.2rem;
         }
 
         .tip-card {
             background: #e8f4fc;
             border-left: 4px solid var(--primary);
-            padding: 1.2rem;
-            border-radius: 0 12px 12px 0;
-            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] .tip-card {
@@ -614,41 +693,45 @@
 
         .tip-title {
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            font-size: 0.95rem;
         }
 
         .empty-state {
             text-align: center;
-            padding: 2rem;
+            padding: 1.5rem;
             color: var(--gray);
+            font-size: 0.9rem;
         }
 
         .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
             color: #cbd5e1;
         }
 
         /* Diet section */
         .diet-tabs {
             display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
+            gap: 8px;
+            margin-bottom: 15px;
             border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 15px;
+            padding-bottom: 12px;
+            flex-wrap: wrap;
         }
 
         .diet-tab {
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 50px;
             background: #f1f5f9;
             cursor: pointer;
             transition: var(--transition);
             font-weight: 500;
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] .diet-tab {
@@ -662,11 +745,12 @@
 
         .meal-item {
             background: white;
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            border-radius: 14px;
+            padding: 1.2rem;
+            margin-bottom: 1.2rem;
             box-shadow: var(--card-shadow);
             border-left: 4px solid var(--primary);
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] .meal-item {
@@ -677,26 +761,26 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .meal-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
         }
 
         .meal-time {
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         /* Grocery list */
         .grocery-item {
             display: flex;
             align-items: center;
-            padding: 12px 15px;
-            border-radius: 12px;
-            margin-bottom: 8px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            margin-bottom: 6px;
             background: white;
             border: 1px solid #e2e8f0;
         }
@@ -707,7 +791,7 @@
         }
 
         .grocery-check {
-            margin-right: 15px;
+            margin-right: 12px;
         }
 
         .grocery-content {
@@ -716,16 +800,17 @@
 
         .grocery-title {
             font-weight: 500;
+            font-size: 0.95rem;
         }
 
         .grocery-quantity {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--gray);
         }
 
         .grocery-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
         }
 
         .grocery-purchased {
@@ -736,14 +821,14 @@
         /* Footer */
         footer {
             background: white;
-            padding: 1.5rem;
+            padding: 0.8rem 1rem;
             text-align: center;
             color: var(--gray);
-            font-size: 0.9rem;
+            font-size: 0.75rem;
             position: fixed;
             bottom: 0;
             width: 100%;
-            box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.05);
             border-top: 1px solid #e2e8f0;
             transition: var(--transition);
         }
@@ -756,20 +841,21 @@
         /* Notification */
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 15px;
+            right: 15px;
             background: white;
             color: var(--success);
-            padding: 15px 25px;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            padding: 12px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-weight: 500;
             z-index: 1000;
             transform: translateX(200%);
             transition: transform 0.3s ease;
+            font-size: 0.9rem;
         }
 
         .notification.show {
@@ -800,11 +886,11 @@
 
         .modal-content {
             background: white;
-            border-radius: 20px;
-            padding: 2rem;
+            border-radius: 18px;
+            padding: 1.8rem;
             max-width: 500px;
             width: 90%;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
             transform: translateY(20px);
             transition: transform 0.3s ease;
         }
@@ -818,8 +904,8 @@
         }
 
         .modal-title {
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
             color: var(--darker);
         }
 
@@ -829,18 +915,19 @@
 
         .modal-actions {
             display: flex;
-            gap: 15px;
-            margin-top: 2rem;
+            gap: 12px;
+            margin-top: 1.5rem;
             justify-content: flex-end;
         }
 
         /* Tutorial page */
         .tutorial-step {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            padding: 1.2rem;
+            border-radius: 14px;
             background: #f1f5f9;
             border-left: 4px solid var(--primary);
+            font-size: 0.9rem;
         }
 
         [data-theme="dark"] .tutorial-step {
@@ -848,21 +935,22 @@
         }
 
         .tutorial-step h3 {
-            margin-bottom: 1rem;
+            margin-bottom: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            font-size: 1.1rem;
         }
 
         .tutorial-step i {
             color: var(--primary);
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         /* Reports */
         .chart-container {
-            height: 300px;
-            margin-bottom: 2rem;
+            height: 280px;
+            margin-bottom: 1.5rem;
         }
 
         /* Settings */
@@ -870,7 +958,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 0;
+            padding: 12px 0;
             border-bottom: 1px solid #e2e8f0;
         }
 
@@ -885,8 +973,8 @@
         .switch {
             position: relative;
             display: inline-block;
-            width: 60px;
-            height: 34px;
+            width: 54px;
+            height: 30px;
         }
 
         .switch input {
@@ -904,14 +992,14 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 34px;
+            border-radius: 30px;
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 26px;
-            width: 26px;
+            height: 22px;
+            width: 22px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -924,29 +1012,31 @@
         }
 
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(24px);
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .container {
-                padding: 1rem;
+                padding: 0.8rem;
             }
             .section {
-                padding: 1.3rem;
+                padding: 1.2rem;
+                border-radius: 16px;
             }
             .timer-display {
-                font-size: 2.5rem;
-                min-width: 200px;
+                font-size: 2.2rem;
+                min-width: 180px;
             }
             .finance-summary {
                 grid-template-columns: 1fr 1fr;
             }
             .muscle-groups {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
             }
             .tabs {
-                margin-top: 15px;
+                min-width: max-content;
             }
         }
 
@@ -960,13 +1050,23 @@
             }
             .timer-controls button {
                 width: 100%;
-                max-width: 250px;
+                max-width: 220px;
             }
             .modal-actions {
                 flex-direction: column;
             }
             .modal-actions button {
                 width: 100%;
+            }
+            .header-actions {
+                gap: 8px;
+            }
+            .logo {
+                font-size: 1.3rem;
+            }
+            .tab {
+                min-width: 80px;
+                font-size: 0.8rem;
             }
         }
     </style>
@@ -1026,28 +1126,7 @@
                 <div class="logo-icon">
                     <i class="fas fa-calendar-day"></i>
                 </div>
-                
-            </div>
-            
-            <div class="tabs">
-                <div class="tab active" data-tab="tasks">
-                    <i class="fas fa-tasks"></i> Tarefas
-                </div>
-                <div class="tab" data-tab="finance">
-                    <i class="fas fa-money-bill-wave"></i> Finanças
-                </div>
-                <div class="tab" data-tab="workout">
-                    <i class="fas fa-dumbbell"></i> Treino
-                </div>
-                <div class="tab" data-tab="diet">
-                    <i class="fas fa-utensils"></i> Dieta
-                </div>
-                <div class="tab" data-tab="reports">
-                    <i class="fas fa-chart-bar"></i> Relatórios
-                </div>
-                <div class="tab" data-tab="settings">
-                    <i class="fas fa-cog"></i> Configurações
-                </div>
+                <div class="logo">OrganizeDay</div>
             </div>
             
             <div class="header-actions">
@@ -1057,6 +1136,29 @@
                 <button class="header-btn" id="themeToggle">
                     <i class="fas fa-moon"></i>
                 </button>
+            </div>
+            
+            <div class="tabs-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="tasks">
+                        <i class="fas fa-tasks"></i> Tarefas
+                    </div>
+                    <div class="tab" data-tab="finance">
+                        <i class="fas fa-money-bill-wave"></i> Finanças
+                    </div>
+                    <div class="tab" data-tab="workout">
+                        <i class="fas fa-dumbbell"></i> Treino
+                    </div>
+                    <div class="tab" data-tab="diet">
+                        <i class="fas fa-utensils"></i> Dieta
+                    </div>
+                    <div class="tab" data-tab="reports">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </div>
+                    <div class="tab" data-tab="settings">
+                        <i class="fas fa-cog"></i> Configurações
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -1069,13 +1171,13 @@
             <div class="card">
                 <div class="form-group">
                     <label for="taskInput">Adicionar nova tarefa</label>
-                    <div style="display: flex; gap: 10px;">
+                    <div style="display: flex; gap: 8px;">
                         <input type="text" id="taskInput" placeholder="O que precisa ser feito?">
                         <button id="addTaskBtn"><i class="fas fa-plus"></i> Adicionar</button>
                     </div>
                 </div>
                 
-                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                     <div>
                         <label for="taskPriority">Prioridade</label>
                         <select id="taskPriority">
@@ -1092,10 +1194,10 @@
             </div>
             
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h3>Minhas Tarefas</h3>
                     <div>
-                        <button class="secondary" id="clearTasksBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                        <button class="secondary small" id="clearTasksBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
                     </div>
                 </div>
                 
@@ -1173,19 +1275,36 @@
             </div>
             
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h3>Transações Recentes</h3>
                     <div>
-                        <button class="secondary" id="clearFinancesBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                        <button class="secondary small" id="clearFinancesBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
                     </div>
                 </div>
                 
-                <div id="transactionsList">
-                    <div class="empty-state">
-                        <i class="fas fa-receipt"></i>
-                        <h3>Nenhuma transação registrada</h3>
-                        <p>Adicione suas receitas e despesas para começar</p>
-                    </div>
+                <div class="table-responsive">
+                    <table class="finance-table">
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th>Categoria</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsList">
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state" style="padding: 20px 0;">
+                                        <i class="fas fa-receipt"></i>
+                                        <h3>Nenhuma transação registrada</h3>
+                                        <p>Adicione suas receitas e despesas para começar</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
@@ -1260,6 +1379,42 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Seção de Exercícios (inicialmente oculta) -->
+            <div id="exercises-section" style="display: none;">
+                <div class="card">
+                    <button id="backToWorkoutBtn" class="secondary"><i class="fas fa-arrow-left"></i> Voltar</button>
+                    <h3 id="muscle-group-title">Exercícios para <span id="muscle-group-name"></span></h3>
+                    
+                    <div class="form-group">
+                        <label for="exerciseName">Nome do Exercício</label>
+                        <input type="text" id="exerciseName" placeholder="Ex: Supino reto, Rosca direta...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exerciseSets">Séries</label>
+                        <input type="number" id="exerciseSets" placeholder="Número de séries">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="exerciseReps">Repetições</label>
+                        <input type="text" id="exerciseReps" placeholder="Ex: 10-12, 8-10...">
+                    </div>
+                    
+                    <button id="addExerciseBtn"><i class="fas fa-plus"></i> Adicionar Exercício</button>
+                </div>
+                
+                <div class="card">
+                    <h3>Lista de Exercícios</h3>
+                    <div id="exercisesList">
+                        <div class="empty-state">
+                            <i class="fas fa-dumbbell"></i>
+                            <h3>Nenhum exercício adicionado</h3>
+                            <p>Adicione exercícios para este grupo muscular</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
         
         <!-- Seção de Dieta e Compras -->
@@ -1331,10 +1486,10 @@
                 </div>
                 
                 <div class="card">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <h3>Lista de Compras</h3>
                         <div>
-                            <button class="secondary" id="clearGroceryBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                            <button class="secondary small" id="clearGroceryBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
                         </div>
                     </div>
                     
@@ -1420,7 +1575,7 @@
                         <h3>Exportar Dados</h3>
                         <p>Salve uma cópia de todos os seus dados</p>
                     </div>
-                    <button class="secondary" id="exportAllDataBtn"><i class="fas fa-download"></i> Exportar</button>
+                    <button class="secondary small" id="exportAllDataBtn"><i class="fas fa-download"></i> Exportar</button>
                 </div>
                 
                 <div class="settings-option">
@@ -1428,7 +1583,7 @@
                         <h3>Importar Dados</h3>
                         <p>Restaurar dados de um backup</p>
                     </div>
-                    <button class="secondary" id="importDataBtn"><i class="fas fa-upload"></i> Importar</button>
+                    <button class="secondary small" id="importDataBtn"><i class="fas fa-upload"></i> Importar</button>
                 </div>
                 
                 <div class="settings-option">
@@ -1436,13 +1591,13 @@
                         <h3>Limpar Todos os Dados</h3>
                         <p>Excluir permanentemente todas as informações</p>
                     </div>
-                    <button class="danger" id="resetAllDataBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
+                    <button class="danger small" id="resetAllDataBtn"><i class="fas fa-trash"></i> Limpar Tudo</button>
                 </div>
             </div>
             
             <div class="card">
                 <h3>Sobre o OrganizeDay</h3>
-                <p>Versão: 1.0.0</p>
+                <p>Versão: 1.1.0</p>
                 <p>Desenvolvido para ajudar você a organizar seu dia com eficiência.</p>
                 <p>Todos os dados são armazenados localmente no seu dispositivo por até 12 meses.</p>
             </div>
@@ -1504,7 +1659,7 @@
     </div>
 
     <footer>
-        <div>OrganizeDay © 2025 - Seus dados são armazenados localmente por até 12 meses - gahsouza.com.br</div>
+        <div>OrganizeDay © 2025 - Dados armazenados localmente por até 12 meses - gahsouza.com.br</div>
     </footer>
 
     <script>
@@ -1525,7 +1680,14 @@
         let appState = {
             tasks: [],
             finances: [],
-            workouts: [],
+            workouts: {
+                chest: [],
+                back: [],
+                legs: [],
+                shoulders: [],
+                biceps: [],
+                triceps: []
+            },
             diet: [],
             grocery: [],
             settings: {
@@ -1533,7 +1695,8 @@
                 notifications: true,
                 sounds: true
             },
-            currentSection: 'tasks'
+            currentSection: 'tasks',
+            currentMuscleGroup: null
         };
         
         // DOM Elements
@@ -1570,6 +1733,14 @@
             timerDisplay: document.getElementById('timerDisplay'),
             minutesInput: document.getElementById('minutesInput'),
             secondsInput: document.getElementById('secondsInput'),
+            exercisesSection: document.getElementById('exercises-section'),
+            backToWorkoutBtn: document.getElementById('backToWorkoutBtn'),
+            muscleGroupName: document.getElementById('muscle-group-name'),
+            exerciseName: document.getElementById('exerciseName'),
+            exerciseSets: document.getElementById('exerciseSets'),
+            exerciseReps: document.getElementById('exerciseReps'),
+            addExerciseBtn: document.getElementById('addExerciseBtn'),
+            exercisesList: document.getElementById('exercisesList'),
             
             // Diet elements
             dietTabs: document.querySelectorAll('.diet-tab'),
@@ -1694,6 +1865,12 @@
                 appState.finances = JSON.parse(savedFinances);
             }
             
+            // Load workouts
+            const savedWorkouts = Cookies.get(DATA_KEYS.WORKOUTS);
+            if (savedWorkouts) {
+                appState.workouts = JSON.parse(savedWorkouts);
+            }
+            
             // Load diet
             const savedDiet = Cookies.get(DATA_KEYS.DIET);
             if (savedDiet) {
@@ -1722,6 +1899,9 @@
             
             // Save finances
             Cookies.set(DATA_KEYS.FINANCES, JSON.stringify(appState.finances), { expires: COOKIE_EXPIRATION });
+            
+            // Save workouts
+            Cookies.set(DATA_KEYS.WORKOUTS, JSON.stringify(appState.workouts), { expires: COOKIE_EXPIRATION });
             
             // Save diet
             Cookies.set(DATA_KEYS.DIET, JSON.stringify(appState.diet), { expires: COOKIE_EXPIRATION });
@@ -1822,7 +2002,7 @@
                     dateLabel = dateLabel.charAt(0).toUpperCase() + dateLabel.slice(1);
                 }
                 
-                html += `<div class="date-header">${dateLabel}</div>`;
+                html += `<div class="date-header" style="margin: 15px 0 8px; font-size: 0.9rem;">${dateLabel}</div>`;
                 
                 tasks.forEach(task => {
                     const priorityClass = `priority-${task.priority}`;
@@ -1942,28 +2122,20 @@
         function renderTransactions() {
             if (appState.finances.length === 0) {
                 dom.transactionsList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-receipt"></i>
-                        <h3>Nenhuma transação registrada</h3>
-                        <p>Adicione suas receitas e despesas para começar</p>
-                    </div>
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state" style="padding: 20px 0;">
+                                <i class="fas fa-receipt"></i>
+                                <h3>Nenhuma transação registrada</h3>
+                                <p>Adicione suas receitas e despesas para começar</p>
+                            </div>
+                        </td>
+                    </tr>
                 `;
                 return;
             }
             
-            let html = `
-                <table class="finance-table">
-                    <thead>
-                        <tr>
-                            <th>Descrição</th>
-                            <th>Categoria</th>
-                            <th>Data</th>
-                            <th>Valor</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
+            let html = '';
             
             appState.finances.forEach(transaction => {
                 const date = new Date(transaction.date);
@@ -1984,7 +2156,6 @@
                 `;
             });
             
-            html += `</tbody></table>`;
             dom.transactionsList.innerHTML = html;
             
             // Add event listeners for delete buttons
@@ -2007,6 +2178,128 @@
                 'other': 'Outro'
             };
             return categories[category] || category;
+        }
+        
+        // Exercise management functions
+        function showExercisesSection(muscleGroup) {
+            appState.currentMuscleGroup = muscleGroup;
+            dom.muscleGroupName.textContent = getMuscleGroupName(muscleGroup);
+            dom.exercisesSection.style.display = 'block';
+            renderExercises();
+        }
+        
+        function hideExercisesSection() {
+            dom.exercisesSection.style.display = 'none';
+            appState.currentMuscleGroup = null;
+        }
+        
+        function getMuscleGroupName(muscle) {
+            const names = {
+                'chest': 'Peito',
+                'back': 'Costas',
+                'legs': 'Pernas',
+                'shoulders': 'Ombros',
+                'biceps': 'Bíceps',
+                'triceps': 'Tríceps'
+            };
+            return names[muscle] || muscle;
+        }
+        
+        function addExercise(name, sets, reps) {
+            if (!name.trim()) return;
+            
+            const newExercise = {
+                id: Date.now(),
+                name: name,
+                sets: sets,
+                reps: reps,
+                completed: false
+            };
+            
+            appState.workouts[appState.currentMuscleGroup].push(newExercise);
+            saveAppData();
+            renderExercises();
+            showNotification('Exercício adicionado com sucesso!');
+            
+            // Clear form
+            dom.exerciseName.value = '';
+            dom.exerciseSets.value = '';
+            dom.exerciseReps.value = '';
+        }
+        
+        function toggleExerciseCompletion(id) {
+            const exercises = appState.workouts[appState.currentMuscleGroup];
+            const exercise = exercises.find(e => e.id === id);
+            if (exercise) {
+                exercise.completed = !exercise.completed;
+                saveAppData();
+                renderExercises();
+                showNotification(exercise.completed ? 'Exercício marcado como feito!' : 'Exercício marcado como pendente');
+            }
+        }
+        
+        function deleteExercise(id) {
+            appState.workouts[appState.currentMuscleGroup] = 
+                appState.workouts[appState.currentMuscleGroup].filter(e => e.id !== id);
+            saveAppData();
+            renderExercises();
+            showNotification('Exercício removido com sucesso!');
+        }
+        
+        function renderExercises() {
+            const exercises = appState.workouts[appState.currentMuscleGroup];
+            
+            if (exercises.length === 0) {
+                dom.exercisesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-dumbbell"></i>
+                        <h3>Nenhum exercício adicionado</h3>
+                        <p>Adicione exercícios para este grupo muscular</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            exercises.forEach(exercise => {
+                const completedClass = exercise.completed ? 'exercise-completed' : '';
+                
+                html += `
+                    <div class="exercise-item ${completedClass}" data-id="${exercise.id}">
+                        <div class="exercise-check">
+                            <input type="checkbox" id="exercise-${exercise.id}" ${exercise.completed ? 'checked' : ''}>
+                        </div>
+                        <div class="exercise-content">
+                            <div class="exercise-title">${exercise.name}</div>
+                            <div class="exercise-details">
+                                <span>Séries: ${exercise.sets || '-'}</span>
+                                <span>Reps: ${exercise.reps || '-'}</span>
+                            </div>
+                        </div>
+                        <div class="exercise-actions">
+                            <button class="danger small"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            dom.exercisesList.innerHTML = html;
+            
+            // Add event listeners
+            exercises.forEach(exercise => {
+                // Completion toggle
+                const checkbox = document.getElementById(`exercise-${exercise.id}`);
+                if (checkbox) {
+                    checkbox.addEventListener('change', () => toggleExerciseCompletion(exercise.id));
+                }
+                
+                // Delete button
+                const deleteBtn = document.querySelector(`.exercise-item[data-id="${exercise.id}"] .danger`);
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', () => deleteExercise(exercise.id));
+                }
+            });
         }
         
         // Diet management functions
@@ -2076,7 +2369,7 @@
                             <p>${meal.ingredients.replace(/\n/g, '<br>')}</p>
                         </div>
                         ${calories}
-                        <div class="meal-actions" style="margin-top: 15px;">
+                        <div class="meal-actions" style="margin-top: 12px;">
                             <button class="danger small"><i class="fas fa-trash"></i> Remover</button>
                         </div>
                     </div>
@@ -2162,7 +2455,7 @@
             let html = '';
             
             Object.keys(itemsByCategory).forEach(category => {
-                html += `<div class="category-header">${category}</div>`;
+                html += `<div class="category-header" style="margin: 15px 0 8px; font-size: 0.9rem;">${category}</div>`;
                 
                 itemsByCategory[category].forEach(item => {
                     const purchasedClass = item.purchased ? 'grocery-purchased' : '';
@@ -2396,6 +2689,25 @@
             dom.pauseTimerBtn.addEventListener('click', pauseTimer);
             dom.resetTimerBtn.addEventListener('click', resetTimer);
             
+            // Workout muscle groups
+            document.querySelectorAll('.muscle-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    const muscleGroup = card.dataset.muscle;
+                    showExercisesSection(muscleGroup);
+                });
+            });
+            
+            dom.backToWorkoutBtn.addEventListener('click', hideExercisesSection);
+            
+            // Exercises
+            dom.addExerciseBtn.addEventListener('click', () => {
+                addExercise(
+                    dom.exerciseName.value,
+                    dom.exerciseSets.value,
+                    dom.exerciseReps.value
+                );
+            });
+            
             // Diet
             dom.addMealBtn.addEventListener('click', () => {
                 addMeal(
@@ -2477,6 +2789,7 @@
             const data = {
                 tasks: appState.tasks,
                 finances: appState.finances,
+                workouts: appState.workouts,
                 diet: appState.diet,
                 grocery: appState.grocery,
                 settings: appState.settings,
@@ -2500,6 +2813,14 @@
             if (confirm('Tem certeza que deseja limpar todos os dados? Esta ação não pode ser desfeita.')) {
                 appState.tasks = [];
                 appState.finances = [];
+                appState.workouts = {
+                    chest: [],
+                    back: [],
+                    legs: [],
+                    shoulders: [],
+                    biceps: [],
+                    triceps: []
+                };
                 appState.diet = [];
                 appState.grocery = [];
                 appState.settings.darkMode = false;
